@@ -1,0 +1,126 @@
+/* ViewApplications.module.css */
+
+.container {
+    font-family: 'Roboto', sans-serif;
+    padding: 40px;
+    background-color: #f5f7fa;
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 32px;
+  }
+  
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+  
+  .filterInput {
+    flex: 1 1 22%;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+  }
+  
+  .filterInput:not(:last-child) {
+    margin-right: 1%;
+  }
+  
+  .filterInput:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th,
+  .table td {
+    padding: 15px 20px;
+    text-align: left;
+  }
+  
+  .table thead {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .table tbody tr {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .noData {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-size: 18px;
+  }
+
+  .selectButton {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(to right, #41ac4f, #c1d5c1);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .rejectButton {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(to right, #36d1dc, #5b86e5);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  
+  
+  @media (max-width: 768px) {
+    .filterInput {
+      flex: 1 1 48%;
+      margin-right: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .filterInput {
+      flex: 1 1 100%;
+    }
+  
+    .table th,
+    .table td {
+      padding: 10px 15px;
+    }
+  }
+  

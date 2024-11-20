@@ -1,0 +1,32 @@
+/* Toast.module.css */
+
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745; /* Success color */
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000;
+    cursor: pointer;
+    animation: fadeInOut 5s forwards;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -20px);
+    }
+    10%, 90% {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -20px);
+    }
+  }
+  

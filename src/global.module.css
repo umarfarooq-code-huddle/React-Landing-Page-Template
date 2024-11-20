@@ -1,0 +1,42 @@
+.submitButton {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(to right, #36d1dc, #5b86e5);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+  }
+  
+  
+  .selectButton {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(to right, #7fc689, #71ea6f);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+  }
+  
+  .rejectButton {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(to right, #cf0937, #b84747);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }

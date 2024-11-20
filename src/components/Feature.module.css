@@ -1,0 +1,12 @@
+.col-md-5th {
+    width: 20%;
+    float: left;
+    padding: 15px; /* Adjust padding as needed */
+  }
+  
+  @media (max-width: 768px) {
+    .col-md-5th {
+      width: 50%; /* For smaller screens, make them take up half width */
+    }
+  }
+  
