@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 
 export const Features = (props) => {
   const [currentStep, setCurrentStep] = useState(0); // Tracks the current step being completed
   const [modalStep, setModalStep] = useState(null); // Tracks which modal is open
 
+  const navigate = useNavigate()
   const handleImageClick = (index) => {
     if (index === currentStep) {
       setModalStep(index); // Open the modal for the clicked step
@@ -16,7 +19,7 @@ export const Features = (props) => {
   };
 
   const handleNavigateToApplication = () => {
-    window.location.href = "/Application";
+  navigate("/Application");
   };
 
   const renderModalContent = () => {
