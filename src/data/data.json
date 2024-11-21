@@ -165,34 +165,34 @@
   },
   "Features": [
     {
-      "icon": "https://i.ibb.co/PWn6BhW/terms-conditions.png",
+      "icon": "https://i.ibb.co/Q8XgGDg/output-onlinepngtools.png",
       "title": "Step 1",
       "text": "Agree to our terms of use",
       "buttonText":"Terms ",
-      "imgStyle":{"height":"200px","width":"auto"}
+      "imgStyle":{"height":"60px","width":"auto"}
 
     },
     {
-      "icon": "https://i.ibb.co/2MSkSYQ/vecteezy-youtube-logo-for-popular-online-media-content-creation-22721714.png",
+      "icon": "https://i.ibb.co/zJ3Cjj1/image-removebg-preview.png",
       "title": "Step 2",
       "text": "Subscribe to our Youtube Channel",
       "buttonText":"Youtube",
-      "imgStyle":{"height":"100px","width":"auto","alignSelf":"flex-end"}
+      "imgStyle":{"height":"50px","width":"auto","alignSelf":"flex-end"}
     },
     {
-      "icon": "https://i.ibb.co/9bjRjGV/rumble-logo.png",
+      "icon": "https://i.ibb.co/KwLs3gw/output-onlinepngtools-2.png",
       "title": "Step 3",
       "text": "Subscribe to our Rumble Channel",
       "buttonText":"Rumble",
-      "imgStyle":{"height":"200px","width":"auto"}
+      "imgStyle":{"height":"50px","width":"auto"}
 
     },
     {
-      "icon": "https://i.ibb.co/9T4jp3h/submit-icon.png",
+      "icon": "https://i.ibb.co/m4Tb5cP/output-onlinepngtools-3.png",
       "title": "Step 4",
       "text": "Submit your wish",
       "buttonText":"Wish"
-      ,      "imgStyle":{"height":"200px","width":"auto"}
+      ,      "imgStyle":{"height":"50px","width":"180px"}
 
     }
   ]
