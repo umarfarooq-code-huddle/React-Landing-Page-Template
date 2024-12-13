@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/landingAssets/black.jpg";
+import logo from "../assets/landingAssets/image.png";
 
 export const Header = () => {
   return (
@@ -16,8 +16,8 @@ export const Header = () => {
         src={logo}
         alt="Logo"
         style={{
-          width: '320px',
-          height: '320px',
+          width: '50vw',
+          height: 'auto',
           objectFit: 'contain',
           borderRadius:'30%'
         }}

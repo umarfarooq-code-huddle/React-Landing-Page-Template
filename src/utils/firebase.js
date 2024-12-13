@@ -1,13 +1,8 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './LandingPage';
-import Application from './components/Application';
-import { GoogleOAuthProvider } from '@react-oauth/google'; // Import the OAuth provider
-import ViewApplications from './components/ViewApplications';
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import {getAuth} from "firebase/auth"
 import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,19 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+const auth  = getAuth();
+const db = getFirestore(app)
 
-function App() {
-  return (
-    <GoogleOAuthProvider clientId="189661213738-0m6dfqligt2hslr2g0a1qiunh7tib5qs.apps.googleusercontent.com">
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/application" element={<Application />} />
-        <Route path="/applications" element={<ViewApplications />} />
-      </Routes>
-    </Router>
-    </GoogleOAuthProvider>
-  );
-}
-
-export default App;
+export default app;

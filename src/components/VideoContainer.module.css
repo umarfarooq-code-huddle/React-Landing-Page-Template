@@ -1,0 +1,12 @@
+.video-container iframe {
+    width: 100%; /* Default to full width */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  @media (max-width: 768px) {
+    .video-container iframe {
+      width: 400px; /* Smaller width for small screens */
+      height: auto; /* Adjusted height */
+    }
+  }
+  

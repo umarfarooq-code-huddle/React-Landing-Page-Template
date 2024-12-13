@@ -5,9 +5,34 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #faf0e6
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* For small screens (e.g., less than 768px) */
+@media (max-width: 768px) {
+  .features-container {
+    flex-direction: column; /* Stack items vertically */
+  }
+  .feature-item {
+    display: block; /* Ensure each item takes full width */
+    width: 100%; /* Optional: Explicitly set width to 100% */
+  }
+}
+
+/* For large screens (e.g., 768px and above) */
+@media (min-width: 768px) {
+  .features-container {
+    flex-direction: row; /* Arrange items horizontally */
+  }
+  .feature-item {
+    display: inline-block; /* Allow items to sit next to each other */
+    width: auto; /* Allow items to take their natural width */
+  }
+}
+
+

@@ -8,6 +8,7 @@ export const Features = (props) => {
 
   const navigate = useNavigate()
   const handleImageClick = (index) => {
+    console.log("Here I am")
     if (index === currentStep) {
       setModalStep(index); // Open the modal for the clicked step
     }
@@ -29,67 +30,27 @@ export const Features = (props) => {
           <>
             <h2>Terms & Conditions</h2>
             <div
-            style={{
-              background: "#fff",
-              padding: "20px",
-              borderRadius: "5px",
-              maxWidth: "800px",
-              maxHeight: "80vh",
-              overflowY: "scroll",
-              textAlign: "left",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            }}
-          >
-            {/* <h2 style={{ textAlign: "center" }}>Terms & Conditions</h2> */}
-            <div>
-              <p>
-                This Terms of Use agreement governs your use of our website and the Automated Grant Submission System.  
-                By accessing or using our website to submit an application for a grant, you must agree to and comply with these terms. 
-              </p>
-              <h3>Our Mission</h3>
-              <p>
-                Our mission is to build an online Humanitarian Community to help people with financial hardship through our YouTube & Rumble Social Media channels.  
-                You must be an active subscriber/follower to both channels to be eligible to have your wish submitted to our foundation through our automated system.
-              </p>
-              <h3>Requirements for Participation</h3>
-              <ul>
-                <li>All applicants must be 18 years old to apply for a grant.</li>
-                <li>All applicants must provide supporting documents for identification and verification of the specific financial need requested.</li>
-                <li>
-                  Use a valid Google email that is linked and verified as subscribed to our YouTube channel.  
-                  The use of our system can only be accessed in areas where YouTube is available.
-                </li>
-                <li>Have a Rumble account username and be a verified follower of our channel.</li>
-                <li>Submit a video testimonial of how this Grant has helped you and your application experience with a minimum length of 2 minutes.</li>
-                <li>
-                  Have a validated digital wallet account in your name with either Uphold or Coinbase to receive the grant funding with our designated digital asset.
-                </li>
-              </ul>
-              <h3>Grant Application Process</h3>
-              <ul>
-                <li>
-                  <strong>Eligibility:</strong> Our grants are available to individuals meeting specific eligibility criteria outlined in our grant guidelines.
-                </li>
-                <li>
-                  <strong>Application Submission:</strong> You agree to provide accurate and complete information when submitting a grant application.
-                </li>
-                <li>
-                  <strong>Grant Approval Decisions:</strong> Our foundation reserves the right to approve or reject your wish application at its sole discretion.
-                </li>
-              </ul>
-              <h3>Donations</h3>
-              <p>
-                If you choose to make a donation to our foundation, you agree to provide accurate and current payment information.
-                All donations must be made to our digital wallet in a USDC or RLUSD stablecoin and are non-refundable.
-              </p>
-              <h3>Limitation of Liability</h3>
-              <p>
-                Our foundation and its affiliates, directors, officers, employees, and agents shall not be liable for any direct, indirect, incidental, special, or consequential damages
-                arising out of or in any way connected with your use of our website or services.
-              </p>
+              style={{
+                background: "#fff",
+                padding: "20px",
+                borderRadius: "5px",
+                maxWidth: "800px",
+                maxHeight: "80vh",
+                overflowY: "hidden",
+                textAlign: "left",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              }}
+            >
+              <iframe
+                src="https://drive.google.com/file/d/1YAXDakgslLTi7IP2KYJ3tCPrqRZLNBvH/preview"
+                style={{
+                  width: "100%",
+                  height: "600px",
+                  border: "none",
+                }}
+                title="Terms & Conditions"
+              ></iframe>
             </div>
-           
-          </div>
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <button
                 style={{
@@ -107,6 +68,8 @@ export const Features = (props) => {
             </div>
           </>
         );
+        
+        
       case 2:
         return (
           <>
@@ -215,32 +178,34 @@ export const Features = (props) => {
   };
 
   return (
-    <div id="features" className="text-center" style={{ background: "#faf0e6", height: "70%" }}>
-      <div className="container">
-        <div className="col-md-10 col-md-offset-1 section-title">
-          <h2>Our Process</h2>
-        </div>
-        <div className="row">
-          {props.data
-            ? props.data.map((d, i) => (
-                <div
-                  key={`${d.title}-${i}`}
-                  className="col-xs-6 col-md-3"
-                  style={{
-                    opacity: i <= currentStep ? 1 : 0.5,
-                    pointerEvents: i === currentStep ? "auto" : "none", // Allow interaction only for the current step
-                  }}
-                  onClick={() => handleImageClick(i)} // Open modal for current step
-                >
-                  <h3>{d.title}</h3>
-                  <p>{d.text}</p>
-                  <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} border="0" />
-                </div>
-              ))
-            : "Loading..."}
-        </div>
+    <div>
+    <div id="features" className="text-center" style={{ background: "#faf0e6", height: "auto" }}>
+    <div className="container">
+      <div className="col-md-10 col-md-offset-1 section-title">
+        <h2>Our Process</h2>
       </div>
-
+      <div className="features-container">
+        {props.data
+          ? props.data.map((d, i) => (
+              <div
+                key={`${d.title}-${i}`}
+                className={`feature-item ${i <= currentStep ? "active" : "inactive"}`}
+                style={{
+                  opacity: i <= currentStep ? 1 : 0.5,
+                  pointerEvents: i === currentStep ? "auto" : "none",
+                }}
+                onClick={() => handleImageClick(i)}
+              >
+                <h3>{d.title}</h3>
+                <p>{d.text}</p>
+                <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} />
+              </div>
+            ))
+          : "Loading..."}
+      </div>
+    </div>
+  </div>
+  
       {/* Modal */}
       {modalStep !== null && (
         <div

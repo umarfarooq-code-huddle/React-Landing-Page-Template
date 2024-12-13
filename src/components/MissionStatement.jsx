@@ -14,8 +14,7 @@ export const MissionStatement = (props) => {
         height:'50%',
         width:'100%',
         backgroundColor: '#faf0e6',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+
       }}
     >
       <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '16px' }}>

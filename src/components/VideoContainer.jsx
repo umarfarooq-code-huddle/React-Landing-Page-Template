@@ -1,6 +1,12 @@
 import React from "react";
+import {useDeviceSelectors} from "react-device-detect"
 
 export const VideoContainer = (props) => {
+
+  const [selectors] = useDeviceSelectors(window.navigator.userAgent);
+
+  // todo: check if it can be done with code instead of react device detect
+  const { isMobile } = selectors;
   return (
     <div
       style={{
@@ -10,25 +16,34 @@ export const VideoContainer = (props) => {
         alignItems: 'center',
         padding: '20px',
         margin: '0 auto',
+        marginTop:isMobile ? '200px':'auto',
         textAlign: 'center',
-        height: '70%',
-        width: '100%',
+        height: 'auto',
+        width: '70%',
         backgroundColor: '#faf0e6',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+
       }}
     >
       <div className="video-container">
-        <iframe
-          width="560"
-          height="400"
+        {isMobile ? <iframe
+
           src="https://www.youtube.com/embed/MPRohprqYO8"
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="intro-video"
-        ></iframe>
+        ></iframe>:
+        <iframe
+        width="560"
+        height="400"
+        src="https://www.youtube.com/embed/MPRohprqYO8"
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="intro-video"
+      ></iframe>}
       </div>
     </div>
   );
