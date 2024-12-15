@@ -16,7 +16,7 @@ export const Header = () => {
         src={logo}
         alt="Logo"
         style={{
-          width: '50vw',
+          width: '40vw',
           height: 'auto',
           objectFit: 'contain',
           borderRadius:'30%'

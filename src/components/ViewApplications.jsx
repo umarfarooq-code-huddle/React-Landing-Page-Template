@@ -4,6 +4,8 @@ import globalStyles from '../global.module.css';
 import EligibilityModal from './EligibilityModal';
 import { useCountries } from './useCountries';
 import { useStates } from './useStates';
+import { db } from '../utils/firebase'; // Import Firestore instance
+import { collection, getDocs } from 'firebase/firestore'; // Firestore methods
 
 function ViewApplications() {
     const [applications, setApplications] = useState([]);
@@ -18,10 +20,24 @@ function ViewApplications() {
     const countries = useCountries();
     const states = useStates(selectedCountryFilter); // States will depend on selected country
 
+    // Fetch applications from Firestore
     useEffect(() => {
-        const data = JSON.parse(localStorage.getItem('applicationData')) || [];
-        setApplications(data);
-        setFilteredApps(data);
+        const fetchApplications = async () => {
+            try {
+                const applicationsCollection = collection(db, 'applications');
+                const applicationsSnapshot = await getDocs(applicationsCollection);
+                const applicationsData = applicationsSnapshot.docs.map((doc) => ({
+                    id: doc.id, // Include document ID
+                    ...doc.data(),
+                }));
+                setApplications(applicationsData);
+                setFilteredApps(applicationsData);
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+            }
+        };
+
+        fetchApplications();
     }, []);
 
     const handleFilterChange = (e) => {
@@ -33,9 +49,11 @@ function ViewApplications() {
             setSelectedStateFilter(value);
         }
 
-        setFilteredApps(applications.filter((app) =>
-            app[name].toLowerCase().includes(value.toLowerCase())
-        ));
+        setFilteredApps(
+            applications.filter((app) =>
+                app[name]?.toLowerCase().includes(value.toLowerCase())
+            )
+        );
     };
 
     const handleRandomSelect = (eligibilityFilters) => {
@@ -46,22 +64,20 @@ function ViewApplications() {
             let eligibleApps = applications;
 
             if (eligibilityFilters.selectedState) {
-                eligibleApps = eligibleApps.filter(app =>
-                    app.selectedState.toLowerCase().includes(eligibilityFilters.selectedState.toLowerCase())
+                eligibleApps = eligibleApps.filter((app) =>
+                    app.selectedState?.toLowerCase().includes(eligibilityFilters.selectedState.toLowerCase())
                 );
             }
 
             if (eligibilityFilters.selectedCountry) {
-                eligibleApps = eligibleApps.filter(app =>
-                    app.selectedCountry.toLowerCase().includes(eligibilityFilters.selectedCountry.toLowerCase())
+                eligibleApps = eligibleApps.filter((app) =>
+                    app.selectedCountry?.toLowerCase().includes(eligibilityFilters.selectedCountry.toLowerCase())
                 );
             }
 
             if (eligibilityFilters.issues && eligibilityFilters.issues.length > 0) {
-                eligibleApps = eligibleApps.filter(app =>
-                    app.issues.some(issue =>
-                        eligibilityFilters.issues.includes(issue)
-                    )
+                eligibleApps = eligibleApps.filter((app) =>
+                    app.issues.some((issue) => eligibilityFilters.issues.includes(issue))
                 );
             }
 
@@ -75,7 +91,7 @@ function ViewApplications() {
         <div className={styles.container}>
             <h1 className={styles.title}>Applications List</h1>
 
-            {/* Existing Filters */}
+            {/* Filters */}
             <div className={styles.filters}>
                 <input
                     type="text"
@@ -137,11 +153,11 @@ function ViewApplications() {
                 </thead>
                 <tbody>
                     {filteredApps.length > 0 ? (
-                        filteredApps.map((app, index) => (
-                            <tr key={index}>
+                        filteredApps.map((app) => (
+                            <tr key={app.id}>
                                 <td>{app.legalName}</td>
-                                <td>{app.selectedState}</td>
-                                <td>{app.selectedCountry}</td>
+                                <td>{app.selectedState || 'N/A'}</td>
+                                <td>{app.selectedCountry || 'N/A'}</td>
                                 <td>
                                     {app.issues.map((issue, idx) => (
                                         <div key={idx}>{issue}</div>
@@ -151,7 +167,9 @@ function ViewApplications() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="4" className={styles.noData}>No applications found.</td>
+                            <td colSpan="4" className={styles.noData}>
+                                No applications found.
+                            </td>
                         </tr>
                     )}
                 </tbody>
@@ -160,7 +178,10 @@ function ViewApplications() {
             {/* Random Select Button */}
             <button
                 className={globalStyles.selectButton}
-                onClick={() => { setShowModal(true); setSelectedApp(null); }}
+                onClick={() => {
+                    setShowModal(true);
+                    setSelectedApp(null);
+                }}
             >
                 Select Random
             </button>

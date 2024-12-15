@@ -27,7 +27,7 @@ export const VideoContainer = (props) => {
       <div className="video-container">
         {isMobile ? <iframe
 
-          src="https://www.youtube.com/embed/MPRohprqYO8"
+          src="https://www.youtube.com/embed/6xffbCOqv8w"
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -37,7 +37,7 @@ export const VideoContainer = (props) => {
         <iframe
         width="560"
         height="400"
-        src="https://www.youtube.com/embed/MPRohprqYO8"
+        src="https://www.youtube.com/embed/6xffbCOqv8w"
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

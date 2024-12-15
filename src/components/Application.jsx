@@ -4,6 +4,8 @@ import Toast from './Toast';
 import { useNavigate } from 'react-router-dom';
 import { useCountries } from './useCountries';
 import { useStates } from './useStates';
+import { db } from '../utils/firebase'; // Make sure to import your Firebase config
+import { collection, addDoc } from 'firebase/firestore';
 
 const issuesList = [
   'Mortgage / Rent: payments late.',
@@ -25,25 +27,15 @@ function ApplicationForm() {
   const [legalName, setLegalName] = useState('');
   const [rumbleUserName, setRumbleUsername] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('')
   const [otherCountry, setOtherCountry] = useState('');
   const [issues, setIssues] = useState([]);
   const [showToast, setShowToast] = useState(false);
-  const [existingApplications, setExistingApplications] = useState([]);
 
   const countries = useCountries(); // Get countries from the hook
   const states = useStates(selectedCountry); // Get states based on selected country
 
-  const fetchData = async () => {
-    const data = JSON.parse(localStorage.getItem('applicationData'));
-    if (data) {
-      setExistingApplications(data);
-    }
-  };
-  useState(() => {
-    fetchData();
-  }, []);
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formData = {
@@ -51,22 +43,29 @@ function ApplicationForm() {
       selectedCountry: selectedCountry === 'Other' && otherCountry ? otherCountry : selectedCountry,
       issues,
       rumbleUserName,
+      selectedState: selectedState,
+      submittedAt: new Date().toISOString(),
     };
 
-    console.log('Form Data:', formData);
+    try {
+      const docRef = await addDoc(collection(db, 'applications'), formData);
+      console.log('Document written with ID: ', docRef.id);
 
-    localStorage.setItem('applicationData', JSON.stringify([formData, ...existingApplications]));
+      setShowToast(true);
 
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
 
-    setShowToast(true);
-
-    setLegalName('');
-    setSelectedCountry('');
-    setOtherCountry('');
-    setIssues([]);
+      // Clear the form after successful submission
+      setLegalName('');
+      setRumbleUsername('');
+      setSelectedCountry('');
+      setOtherCountry('');
+      setIssues([]);
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
   };
 
   const handleIssueChange = (event) => {
@@ -90,14 +89,19 @@ function ApplicationForm() {
               type="text"
               id="legalName"
               value={legalName}
-              onChange={(e) => setLegalName(e.target.value)}
+              onChange={(e) => {
+                const input = e.target.value;
+                if (/^[a-zA-Z\s]*$/.test(input)) { // Only letters and spaces allowed
+                  setLegalName(input);
+                }
+              }}
               required
             />
           </div>
 
 
           <div className={styles.formGroup}>
-            <label htmlFor="legalName">Rumble Username:</label>
+            <label htmlFor="rumbleUserName">Rumble Username:</label>
             <input
               type="text"
               id="rumbleUserName"
@@ -146,7 +150,10 @@ function ApplicationForm() {
               <h2 className={styles.sectionTitle}>State of Residency</h2>
               <div className={styles.formGroup}>
                 <label htmlFor="stateSelect">Select State:</label>
-                <select id="stateSelect" required>
+                <select id="stateSelect" required
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                >
                   <option value="" disabled>
                     -- Select a State --
                   </option>
@@ -176,9 +183,6 @@ function ApplicationForm() {
                 {issue}
               </label>
             ))}
-          </div>
-          <div className={styles.checkboxGroup}>
-            {/* Add your issues list checkboxes here */}
           </div>
 
           <button type="submit" className={styles.submitButton}>

@@ -1,5 +1,7 @@
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { auth } from "../utils/firebase";
 
 
 export const Features = (props) => {
@@ -20,9 +22,30 @@ export const Features = (props) => {
   };
 
   const handleNavigateToApplication = () => {
-  navigate("/Application");
+    navigate("/Application");
   };
 
+
+  const googleLogin = () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/youtube.readonly');
+
+    
+    signInWithPopup(auth, provider).then(async (result) => {
+      console.log(result)
+
+      if (result.user) {
+        handleCompleteStep(1)
+
+
+        const accessToken = result._tokenResponse.oauthAccessToken;
+        window.localstorage.setItem("access_token",accessToken)
+
+      }
+
+
+    })
+  }
   const renderModalContent = () => {
     switch (modalStep) {
       case 0:
@@ -68,8 +91,8 @@ export const Features = (props) => {
             </div>
           </>
         );
-        
-        
+
+
       case 2:
         return (
           <>
@@ -77,19 +100,9 @@ export const Features = (props) => {
             <p>
               To proceed, please subscribe to our Rumble channel. Once subscribed, click "Continue".
             </p>
+            <br/>
             <a href="https://rumble.com/c/c-6750781" target="_blank" rel="noopener noreferrer">
-              <button
-                style={{
-                  padding: "10px 20px",
-                  background: "#28a745",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  margin: "10px",
-                }}
-              >
-                Go to Rumble Channel
-              </button>
+            https://rumble.com/c/c-6750781  
             </a>
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <button
@@ -120,34 +133,23 @@ export const Features = (props) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <button
-                style={{
-                  padding: "10px 20px",
-                  background: "#FF0000",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  margin: "10px",
-                }}
-              >
-                Go to YouTube Channel
-              </button>
+              https://www.youtube.com/@GrantYourWishFoundation
             </a>
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <button
-                style={{
-                  padding: "10px 20px",
-                  background: "#007BFF",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  margin: "5px",
-                }}
-                onClick={handleCompleteStep}
-              >
-                Continue
-              </button>
-            </div>
+            <br />
+            <button
+              style={{
+                padding: "10px 20px",
+                background: "#FF0000",
+                color: "#fff",
+                border: "none",
+                borderRadius: "5px",
+                margin: "10px",
+              }}
+              onClick={googleLogin}
+            >
+              Continue with google
+            </button>
+            
           </>
         );
       case 3:
@@ -179,33 +181,33 @@ export const Features = (props) => {
 
   return (
     <div>
-    <div id="features" className="text-center" style={{ background: "#faf0e6", height: "auto" }}>
-    <div className="container">
-      <div className="col-md-10 col-md-offset-1 section-title">
-        <h2>Our Process</h2>
+      <div id="features" className="text-center" style={{ background: "#faf0e6", height: "auto" }}>
+        <div className="container">
+          <div className="col-md-10 col-md-offset-1 section-title">
+            <h2>Our Process</h2>
+          </div>
+          <div className="features-container">
+            {props.data
+              ? props.data.map((d, i) => (
+                <div
+                  key={`${d.title}-${i}`}
+                  className={`feature-item ${i <= currentStep ? "active" : "inactive"}`}
+                  style={{
+                    opacity: i <= currentStep ? 1 : 0.5,
+                    pointerEvents: i === currentStep ? "auto" : "none",
+                  }}
+                  onClick={() => handleImageClick(i)}
+                >
+                  <h3>{d.title}</h3>
+                  <p>{d.text}</p>
+                  <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} />
+                </div>
+              ))
+              : "Loading..."}
+          </div>
+        </div>
       </div>
-      <div className="features-container">
-        {props.data
-          ? props.data.map((d, i) => (
-              <div
-                key={`${d.title}-${i}`}
-                className={`feature-item ${i <= currentStep ? "active" : "inactive"}`}
-                style={{
-                  opacity: i <= currentStep ? 1 : 0.5,
-                  pointerEvents: i === currentStep ? "auto" : "none",
-                }}
-                onClick={() => handleImageClick(i)}
-              >
-                <h3>{d.title}</h3>
-                <p>{d.text}</p>
-                <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} />
-              </div>
-            ))
-          : "Loading..."}
-      </div>
-    </div>
-  </div>
-  
+
       {/* Modal */}
       {modalStep !== null && (
         <div

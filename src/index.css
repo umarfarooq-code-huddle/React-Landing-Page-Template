@@ -5,7 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #faf0e6
+  background-color: #faf0e6;
+  
 }
 
 code {
@@ -34,5 +35,21 @@ code {
     width: auto; /* Allow items to take their natural width */
   }
 }
+
+.news-card {
+  background: linear-gradient(135deg, #faf0e6, #f1f1f1);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.news-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
 
 

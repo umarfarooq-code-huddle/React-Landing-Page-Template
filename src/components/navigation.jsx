@@ -1,7 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 // import logo from "../../public/img/landingAssets/black.jpg"; // Importing the logo
 
 export const Navigation = (props) => {
+  const navigate = useNavigate()
+
+
+
   return (
     <nav id="menu" className="navbar navbar-default navbar-fixed-top">
       <div className="container">
@@ -40,6 +45,18 @@ export const Navigation = (props) => {
             <li>
               <a href="#features" className="page-scroll">
                 Our Process
+              </a>
+            </li>
+
+            <li onClick={()=>{navigate("/news-feed")}} className="page-scroll">
+            <a  className="page-scroll">
+               News Release
+              </a>
+            </li>
+
+            <li onClick={()=>{navigate("/draw-schedule")}} className="page-scroll">
+            <a  className="page-scroll">
+              Drawing Schedule
               </a>
             </li>
             {/* Uncomment or add more links if needed */}
