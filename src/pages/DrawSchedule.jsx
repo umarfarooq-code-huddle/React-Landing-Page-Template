@@ -32,7 +32,7 @@ const DrawSchedule = () => {
           <tr>
             <th>Draw Title</th>
             <th>Draw Date</th>
-            <th>Announcement Date</th>
+            <th>Draw Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -40,7 +40,7 @@ const DrawSchedule = () => {
             <tr key={schedule.id}>
               <td>{schedule.title}</td>
               <td>{new Date(schedule.drawDate).toLocaleDateString()}</td>
-              <td>{new Date(schedule.announcementDate).toLocaleDateString()}</td>
+              <td>{schedule.drawAmount}</td>
             </tr>
           ))}
         </tbody>

@@ -5,6 +5,7 @@ import { collection, addDoc } from "firebase/firestore";
 const AdminAddDrawSchedule = () => {
   const [title, setTitle] = useState("");
   const [drawDate, setDrawDate] = useState("");
+  const [drawAmount, setDrawAmount] = useState("");
 
   const handleAddSchedule = async (e) => {
     e.preventDefault();
@@ -13,7 +14,7 @@ const AdminAddDrawSchedule = () => {
       await addDoc(schedulesCollection, {
         title,
         drawDate,
-        announcementDate : new Date().toISOString(),
+        drawAmount :drawAmount,
       });
       alert("Draw schedule added successfully!");
       setTitle("");
@@ -58,6 +59,19 @@ const AdminAddDrawSchedule = () => {
           }}
         />
         
+        <input
+          type="number"
+          placeholder="Draw Amount"
+          value={drawAmount}
+          onChange={(e) => setDrawAmount(e.target.value)}
+          required
+          style={{
+            padding: "10px",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            fontSize: "16px",
+          }}
+        />
         <button
           type="submit"
           style={{
