@@ -1,12 +1,36 @@
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { auth } from "../utils/firebase";
+import { auth,db } from "../utils/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 
 export const Features = (props) => {
   const [currentStep, setCurrentStep] = useState(0); // Tracks the current step being completed
   const [modalStep, setModalStep] = useState(null); // Tracks which modal is open
+
+
+  const [termsLink, setTermsLink] = useState(""); // Link fetched from Firebase
+
+
+  useEffect(() => {
+    // Fetch Terms and Conditions link from Firebase
+    const fetchTermsLink = async () => {
+      try {
+        const docRef = doc(db, "settings", "terms-and-conditions");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setTermsLink(docSnap.data().link);
+        } else {
+          console.error("Terms and Conditions document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error fetching Terms and Conditions link:", error);
+      }
+    };
+
+    fetchTermsLink();
+  }, []);
 
   const navigate = useNavigate()
   const handleImageClick = (index) => {
@@ -65,7 +89,7 @@ export const Features = (props) => {
               }}
             >
               <iframe
-                src="https://drive.google.com/file/d/1YAXDakgslLTi7IP2KYJ3tCPrqRZLNBvH/preview"
+                src={termsLink}
                 style={{
                   width: "100%",
                   height: "600px",
@@ -145,9 +169,9 @@ export const Features = (props) => {
                 borderRadius: "5px",
                 margin: "10px",
               }}
-              onClick={googleLogin}
+              onClick={handleCompleteStep}
             >
-              Continue with google
+              Continue
             </button>
             
           </>

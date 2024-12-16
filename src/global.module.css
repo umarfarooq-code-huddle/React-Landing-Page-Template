@@ -20,11 +20,11 @@
     background: linear-gradient(to right, #7fc689, #71ea6f);
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     font-size: 20px;
     cursor: pointer;
     transition: background 0.3s;
-    margin-top: 10px;
+    margin-top: 20px;
   }
   
   .rejectButton {

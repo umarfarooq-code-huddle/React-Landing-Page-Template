@@ -148,6 +148,10 @@ function ViewApplications() {
                         <th>Legal Name</th>
                         <th>State of Residency</th>
                         <th>Country of Residency</th>
+                        <th>Rumble Username</th>
+                        <th>Youtube Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
                         <th>Issues</th>
                     </tr>
                 </thead>
@@ -157,6 +161,10 @@ function ViewApplications() {
                             <tr key={app.id}>
                                 <td>{app.legalName}</td>
                                 <td>{app.selectedState || 'N/A'}</td>
+                                <td>{app.rumbleUserName || 'N/A'}</td>
+                                <td>{app.youtubeUserName || 'N/A'}</td>
+                                <td>{app.gmail || 'N/A'}</td>
+                                <td>{app.phone || 'N/A'}</td>
                                 <td>{app.selectedCountry || 'N/A'}</td>
                                 <td>
                                     {app.issues.map((issue, idx) => (

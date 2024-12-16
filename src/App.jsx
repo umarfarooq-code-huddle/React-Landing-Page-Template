@@ -10,6 +10,7 @@ import NewsFeed from './pages/NewsFeed';
 import AdminAddNews from './pages/AdminAddNews';
 import AdminAddDrawSchedule from './pages/AdminAddDrawSchedule';
 import DrawSchedule from './pages/DrawSchedule';
+import AdminAddPrivacyLink from './pages/AdminAddPrivacyLink';
 
 function App() {
   return (
@@ -41,6 +42,15 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminAddDrawSchedule />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin-add-privacy-link"
+          element={
+            <ProtectedRoute>
+              <AdminAddPrivacyLink />
             </ProtectedRoute>
           }
         />
