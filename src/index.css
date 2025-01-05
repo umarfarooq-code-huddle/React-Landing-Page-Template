@@ -70,18 +70,17 @@ body, html {
 
 main {
   flex: 1;
-  padding-bottom: 60px; /* Adjust according to footer height */
 }
 
 /* Footer styling */
 .footer {
-  background-color: #222;
-  color: #fff;
+  background-color: white;
+  color: #000;
   text-align: center;
+  margin-top: 60px;
   padding: 20px 0;
   position: relative; /* Changed from fixed */
   width: 100%;
-  margin-top: 50px;
 }
 
 .footer-link {

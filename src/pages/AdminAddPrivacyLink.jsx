@@ -3,19 +3,19 @@ import { db } from "../utils/firebase";
 import { doc, setDoc } from "firebase/firestore";
 
 const AdminAddPrivacyLink = () => {
-  const [privacyLink, setPrivacyLink] = useState("");
+  const [PrivacyLink, setPrivacyLink] = useState("");
 
   const handleAddPrivacyLink = async (e) => {
     e.preventDefault();
     try {
-      const docRef = doc(db, "settings", "terms-and-conditions");
+      const docRef = doc(db, "settings", "privacy-policy");
 
-      await setDoc(docRef, { link: privacyLink });
-      alert("Privacy link added successfully!");
+      await setDoc(docRef, { link: PrivacyLink });
+      alert("Privacy Policy link added successfully!");
       setPrivacyLink("");
     } catch (error) {
-      console.error("Error adding privacy link:", error);
-      alert("Failed to add privacy link.");
+      console.error("Error adding Privacy link:", error);
+      alert("Failed to add Privacy link.");
     }
   };
 
@@ -26,7 +26,7 @@ const AdminAddPrivacyLink = () => {
         <input
           type="url"
           placeholder="Privacy Link"
-          value={privacyLink}
+          value={PrivacyLink}
           onChange={(e) => setPrivacyLink(e.target.value)}
           required
           style={{

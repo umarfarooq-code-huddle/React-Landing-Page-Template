@@ -3,7 +3,7 @@ import { doc, getDoc } from "firebase/firestore";
 import "./styles/TermsAndConditions.module.css"; // Optional styling
 import { db } from "../utils/firebase";
 
-const TermsAndConditions = () => {
+const PrivacyPolicy = () => {
   const [termsLink, setTermsLink] = useState("");
 
   useEffect(() => {
@@ -30,15 +30,15 @@ const TermsAndConditions = () => {
         <iframe
           src={termsLink}
           width="100%"
-          height="600px"
+          height="110%"
           title="Terms and Conditions"
           style={{ border: "none" }}
         ></iframe>
       ) : (
-        <p>Loading Terms and Conditions...</p>
+        <p>Loading Privacy Policy...</p>
       )}
     </div>
   );
 };
 
-export default TermsAndConditions;
+export default PrivacyPolicy;

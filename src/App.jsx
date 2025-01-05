@@ -10,9 +10,10 @@ import NewsFeed from './pages/NewsFeed';
 import AdminAddNews from './pages/AdminAddNews';
 import AdminAddDrawSchedule from './pages/AdminAddDrawSchedule';
 import DrawSchedule from './pages/DrawSchedule';
-import AdminAddPrivacyLink from './pages/AdminAddPrivacyLink';
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/Privacy Policy';
+import AdminAddTermsAndConditionsLink from './pages/AdminAddTermsAndConditionsLink';
+import AdminAddPrivacyLink from './pages/AdminAddPrivacyLink';
 
 function App() {
   return (
@@ -53,10 +54,19 @@ function App() {
           />
 
         <Route
+          path="/admin-add-terms-link"
+          element={
+            <ProtectedRoute>
+            <AdminAddTermsAndConditionsLink/>
+            </ProtectedRoute>
+          }
+          />
+
+<Route
           path="/admin-add-privacy-link"
           element={
             <ProtectedRoute>
-            <AdminAddPrivacyLink />
+            <AdminAddPrivacyLink/>
             </ProtectedRoute>
           }
           />

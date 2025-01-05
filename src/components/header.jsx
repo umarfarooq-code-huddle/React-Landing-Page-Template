@@ -8,7 +8,7 @@ export const Header = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
+        height: '70vh',
         backgroundColor: '#faf0e6', // Optional: Set a background color
       }}
     >
@@ -16,10 +16,11 @@ export const Header = () => {
         src={logo}
         alt="Logo"
         style={{
-          width: '40vw',
+          width: '30vw',
           height: 'auto',
           objectFit: 'contain',
-          borderRadius:'30%'
+          borderRadius:'30%',
+          marginTop:'40vh'
         }}
       />
     </div>

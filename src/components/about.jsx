@@ -2,15 +2,17 @@ import React from "react";
 
 export const About = (props) => {
   return (
-    <div id="about" style={{backgroundColor:'#faf0e6',
+    <div id="about" style={{
+      backgroundColor:'#faf0e6',
       display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
+      flexDirection: 'colurmn',
       alignItems: 'center',
+      height:'60vh',
+      width:'100vw',
     }}>
          
-          <div className="col-xs-12 col-md-6">
-            <div className="about-text">
+          <div id="innerabout" bclassName="col-xs-12 col-md-6">
+            <div className="about-text" style={{marginLeft:'auto',marginRight:'auto', width:'65vw'}}>
               <h2>About Us</h2>
               <p>{props.data ? props.data.paragraph : "loading..."}</p>
               <h3>Why Choose Us?</h3>

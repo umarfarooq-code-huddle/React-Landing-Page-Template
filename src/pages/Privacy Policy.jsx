@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
   useEffect(() => {
     const fetchTermsLink = async () => {
       try {
-        const docRef = doc(db, "settings", "terms-and-conditions");
+        const docRef = doc(db, "settings", "privacy-policy");
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setTermsLink(docSnap.data().link);
@@ -30,7 +30,7 @@ const PrivacyPolicy = () => {
         <iframe
           src={termsLink}
           width="100%"
-          height="600px"
+          height="110%"
           title="Terms and Conditions"
           style={{ border: "none" }}
         ></iframe>

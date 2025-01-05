@@ -32,6 +32,25 @@ export const Features = (props) => {
   };
 
 
+    useEffect(() => {
+      const fetchTermsLink = async () => {
+        try {
+          const docRef = doc(db, "settings", "terms-and-conditions");
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setTermsLink(docSnap.data().link);
+          } else {
+            console.error("Terms and Conditions document does not exist!");
+          }
+        } catch (error) {
+          console.error("Error fetching Terms and Conditions link:", error);
+        }
+      };
+  
+      fetchTermsLink();
+    }, []);
+  
+
   const googleLogin = () => {
     const provider = new GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/youtube.readonly');
@@ -186,7 +205,12 @@ export const Features = (props) => {
   };
 
   return (
-    <div>
+    <div style={{height:'100vh',
+      display:'flex',
+      justifyContent:'center',
+      alignContent:'center',
+      alignItems:'center'
+    }}>
       <div id="features" className="text-center" style={{ background: "#faf0e6", height: "auto" }}>
         <div className="container">
           <div className="col-md-10 col-md-offset-1 section-title">
