@@ -167,7 +167,8 @@
     {
       "icon": "https://i.ibb.co/Q8XgGDg/output-onlinepngtools.png",
       "title": "Step 1",
-      "text": "Agree to our terms of use",
+      "text1": "Agree to our ",
+      "text2": "terms of use",
       "buttonText":"Terms ",
       "imgStyle":{"height":"60px","width":"auto"}
 
@@ -175,14 +176,16 @@
     {
       "icon": "https://i.ibb.co/zJ3Cjj1/image-removebg-preview.png",
       "title": "Step 2",
-      "text": "Subscribe to our Youtube Channel",
+      "text1": "Subscribe to our ",
+      "text2": " Youtube Channel",
       "buttonText":"Youtube",
       "imgStyle":{"height":"50px","width":"auto","alignSelf":"flex-end"}
     },
     {
       "icon": "https://i.ibb.co/KwLs3gw/output-onlinepngtools-2.png",
       "title": "Step 3",
-      "text": "Subscribe to our Rumble Channel",
+      "text1": "Subscribe to our",
+      "text2": " Rumble Channel",
       "buttonText":"Rumble",
       "imgStyle":{"height":"50px","width":"auto"}
 
@@ -190,7 +193,7 @@
     {
       "icon": "https://i.ibb.co/m4Tb5cP/output-onlinepngtools-3.png",
       "title": "Step 4",
-      "text": "Submit your wish",
+      "text1": "Submit your wish",
       "buttonText":"Wish"
       ,      "imgStyle":{"height":"50px","width":"180px"}
 

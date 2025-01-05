@@ -13,6 +13,7 @@ import SmoothScroll from "smooth-scroll";
 import "./App.css";
 import { MissionStatement } from "./components/MissionStatement";
 import { VideoContainer } from "./components/VideoContainer";
+import Footer from "./components/Footer";
 
 export const scroll = new SmoothScroll('a[href*="#"]', {
   speed: 1000,
@@ -33,6 +34,7 @@ const LandingPage = () => {
       <VideoContainer/>
       <About data={landingPageData.About} />
       <Features data={landingPageData.Features} />
+      <Footer/>
       {/* <Services data={landingPageData.Services} />
       <Gallery data={landingPageData.Gallery} />
       <Testimonials data={landingPageData.Testimonials} />

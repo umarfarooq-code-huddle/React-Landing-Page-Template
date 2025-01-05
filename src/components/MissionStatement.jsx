@@ -17,10 +17,10 @@ export const MissionStatement = (props) => {
 
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '16px' }}>
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold',marginBottom: '16px' }}>
         {props?.data?.title}
       </h1>
-      <p style={{ fontSize: '24px', lineHeight: '1.6' }}>
+      <p style={{ fontSize: '20px', lineHeight: '1.6', fontStyle:'italic' }}>
         {props?.data?.text}
       </p>
     </div>

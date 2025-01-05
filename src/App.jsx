@@ -11,16 +11,22 @@ import AdminAddNews from './pages/AdminAddNews';
 import AdminAddDrawSchedule from './pages/AdminAddDrawSchedule';
 import DrawSchedule from './pages/DrawSchedule';
 import AdminAddPrivacyLink from './pages/AdminAddPrivacyLink';
+import TermsAndConditions from './pages/TermsAndConditions'
+import PrivacyPolicy from './pages/Privacy Policy';
 
 function App() {
   return (
     <Router>
+      <main>
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/application" element={<Application />} />
         <Route path="/news-feed" element={<NewsFeed />} />
         <Route path="/draw-schedule" element={<DrawSchedule />} />
         <Route path="/login" element={<AdminLogin />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route
           path="/applications"
           element={
@@ -44,17 +50,18 @@ function App() {
               <AdminAddDrawSchedule />
             </ProtectedRoute>
           }
-        />
+          />
 
         <Route
           path="/admin-add-privacy-link"
           element={
             <ProtectedRoute>
-              <AdminAddPrivacyLink />
+            <AdminAddPrivacyLink />
             </ProtectedRoute>
           }
-        />
+          />
       </Routes>
+          </main>
     </Router>
   );
 }

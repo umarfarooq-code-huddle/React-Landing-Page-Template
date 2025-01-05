@@ -50,7 +50,7 @@ export const Navigation = (props) => {
 
             <li onClick={()=>{navigate("/news-feed")}} className="page-scroll">
             <a  className="page-scroll">
-               News Release
+               News Feed
               </a>
             </li>
 

@@ -13,25 +13,7 @@ export const Features = (props) => {
   const [termsLink, setTermsLink] = useState(""); // Link fetched from Firebase
 
 
-  useEffect(() => {
-    // Fetch Terms and Conditions link from Firebase
-    const fetchTermsLink = async () => {
-      try {
-        const docRef = doc(db, "settings", "terms-and-conditions");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setTermsLink(docSnap.data().link);
-        } else {
-          console.error("Terms and Conditions document does not exist!");
-        }
-      } catch (error) {
-        console.error("Error fetching Terms and Conditions link:", error);
-      }
-    };
-
-    fetchTermsLink();
-  }, []);
-
+  
   const navigate = useNavigate()
   const handleImageClick = (index) => {
     console.log("Here I am")
@@ -223,7 +205,11 @@ export const Features = (props) => {
                   onClick={() => handleImageClick(i)}
                 >
                   <h3>{d.title}</h3>
-                  <p>{d.text}</p>
+                  <p>{d.text1}
+<br/>
+{d.text2 ? d.text2 :' _'}
+
+                  </p>
                   <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} />
                 </div>
               ))
