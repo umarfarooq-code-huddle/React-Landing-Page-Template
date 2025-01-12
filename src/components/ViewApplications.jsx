@@ -7,15 +7,19 @@ import { useCountries } from './useCountries';
 import { useStates } from './useStates';
 import { db } from '../utils/firebase'; // Import Firestore instance
 import { collection, getDocs } from 'firebase/firestore'; // Firestore methods
+import DrawTypeModal from './DrawTypeModal';
+
 
 function ViewApplications() {
     const [applications, setApplications] = useState([]);
     const [filteredApps, setFilteredApps] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showDrawTypeModal, setShowDrawTypeModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedApp, setSelectedApp] = useState(null);
     const [selectedCountryFilter, setSelectedCountryFilter] = useState('');
     const [selectedStateFilter, setSelectedStateFilter] = useState('');
+    const [drawType, setDrawType] = useState('');
 
     // Get all countries and states using hooks
     const countries = useCountries();
@@ -84,11 +88,17 @@ function ViewApplications() {
 
             const randomApp = eligibleApps[Math.floor(Math.random() * eligibleApps.length)];
             if (randomApp) {
-                await updateDoc(doc(db, 'applications', randomApp.id), { selected: true });
+                await updateDoc(doc(db, 'applications', randomApp.id), { selected: true, drawType });
             }
             setSelectedApp(randomApp || null);
             setLoading(false);
         }, 1500);
+    };
+
+    const handleDrawTypeSelect = (type) => {
+        setDrawType(type);
+        setShowDrawTypeModal(false);
+        setShowModal(true);
     };
 
     return (
@@ -176,7 +186,7 @@ function ViewApplications() {
                                         <div key={idx}>{issue}</div>
                                     ))}
                                 </td>
-                                <td>{app.selected ? 'Yes' : 'No'}</td>
+                                <td>{app.selected ? app.drawType : 'No'}</td>
                             </tr>
                         ))
                     ) : (
@@ -193,12 +203,20 @@ function ViewApplications() {
             <button
                 className={globalStyles.selectButton}
                 onClick={() => {
-                    setShowModal(true);
+                    setShowDrawTypeModal(true);
                     setSelectedApp(null);
                 }}
             >
                 Select Random
             </button>
+
+            {/* Draw Type Modal */}
+            {showDrawTypeModal && (
+                <DrawTypeModal
+                    onClose={() => setShowDrawTypeModal(false)}
+                    onSelect={handleDrawTypeSelect}
+                />
+            )}
 
             {/* Eligibility Modal */}
             {showModal && (
