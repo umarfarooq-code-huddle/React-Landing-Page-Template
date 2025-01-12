@@ -1,3 +1,4 @@
+import { doc, updateDoc } from 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import styles from './ViewApplications.module.css';
 import globalStyles from '../global.module.css';
@@ -56,11 +57,11 @@ function ViewApplications() {
         );
     };
 
-    const handleRandomSelect = (eligibilityFilters) => {
+    const handleRandomSelect = async (eligibilityFilters) => {
         setLoading(true);
         setSelectedApp(null);
 
-        setTimeout(() => {
+        setTimeout(async () => {
             let eligibleApps = applications;
 
             if (eligibilityFilters.selectedState) {
@@ -82,6 +83,9 @@ function ViewApplications() {
             }
 
             const randomApp = eligibleApps[Math.floor(Math.random() * eligibleApps.length)];
+            if (randomApp) {
+                await updateDoc(doc(db, 'applications', randomApp.id), { selected: true });
+            }
             setSelectedApp(randomApp || null);
             setLoading(false);
         }, 1500);
@@ -153,6 +157,7 @@ function ViewApplications() {
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Issues</th>
+                        <th>Selected</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -171,11 +176,12 @@ function ViewApplications() {
                                         <div key={idx}>{issue}</div>
                                     ))}
                                 </td>
+                                <td>{app.selected ? 'Yes' : 'No'}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="4" className={styles.noData}>
+                            <td colSpan="9" className={styles.noData}>
                                 No applications found.
                             </td>
                         </tr>

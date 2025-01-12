@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { db } from "../utils/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import styles from "./styles/newsFeed.module.css";
+import JsonData from "../data/data.json";
+import { Navigation } from "../components/navigation";
 
 const NewsFeed = () => {
   const [news, setNews] = useState([]);
@@ -26,7 +28,15 @@ const NewsFeed = () => {
     fetchNews();
   }, []);
 
+  const [landingPageData, setLandingPageData] = useState({});
+    useEffect(() => {
+      setLandingPageData(JsonData);
+    }, []);
+
+
   return (
+    <>
+    <Navigation data = {landingPageData.App}/>
     <div className={styles.container}>
       <h1 className={styles.heading}>News Feed</h1>
       <div className={styles.newsGrid}>
@@ -47,6 +57,8 @@ const NewsFeed = () => {
         ))}
       </div>
     </div>
+    </>
+
   );
 };
 

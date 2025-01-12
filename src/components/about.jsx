@@ -4,15 +4,17 @@ export const About = (props) => {
   return (
     <div id="about" style={{
       backgroundColor:'#faf0e6',
-      display: 'flex',
-      flexDirection: 'colurmn',
-      alignItems: 'center',
-      height:'60vh',
-      width:'100vw',
+      height:'80vh',
+      display:'flex',
+      paddingTop:'40vh',
+      justifyContent:'center',
+
+
+    
     }}>
          
-          <div id="innerabout" bclassName="col-xs-12 col-md-6">
-            <div className="about-text" style={{marginLeft:'auto',marginRight:'auto', width:'65vw'}}>
+          <div id="innerabout" className="col-xs-12 col-md-6" style={{display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}}>
+            <div className="about-text" style={{}}>
               <h2>About Us</h2>
               <p>{props.data ? props.data.paragraph : "loading..."}</p>
               <h3>Why Choose Us?</h3>

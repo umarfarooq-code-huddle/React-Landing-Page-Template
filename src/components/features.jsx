@@ -1,8 +1,9 @@
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { auth,db } from "../utils/firebase";
+import { db } from "../utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { useDeviceSelectors } from "react-device-detect";
 
 
 export const Features = (props) => {
@@ -51,26 +52,11 @@ export const Features = (props) => {
     }, []);
   
 
-  const googleLogin = () => {
-    const provider = new GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/youtube.readonly');
+    const [selectors] = useDeviceSelectors(window.navigator.userAgent);
 
-    
-    signInWithPopup(auth, provider).then(async (result) => {
-      console.log(result)
+    // todo: check if it can be done with code instead of react device detect
+    const { isMobile } = selectors;
 
-      if (result.user) {
-        handleCompleteStep(1)
-
-
-        const accessToken = result._tokenResponse.oauthAccessToken;
-        window.localstorage.setItem("access_token",accessToken)
-
-      }
-
-
-    })
-  }
   const renderModalContent = () => {
     switch (modalStep) {
       case 0:
@@ -205,11 +191,13 @@ export const Features = (props) => {
   };
 
   return (
-    <div style={{height:'100vh',
+    <div style={{
+      height:'100vh',
       display:'flex',
       justifyContent:'center',
       alignContent:'center',
-      alignItems:'center'
+      alignItems:'center',
+      marginTop:isMobile ? '40vh' : 'auto',
     }}>
       <div id="features" className="text-center" style={{ background: "#faf0e6", height: "auto" }}>
         <div className="container">

@@ -2,9 +2,14 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import "./styles/TermsAndConditions.module.css"; // Optional styling
 import { db } from "../utils/firebase";
+import JsonData from "../data/data.json";
+import { Navigation } from "../components/navigation";
+
 
 const PrivacyPolicy = () => {
   const [termsLink, setTermsLink] = useState("");
+
+
 
   useEffect(() => {
     const fetchTermsLink = async () => {
@@ -24,20 +29,31 @@ const PrivacyPolicy = () => {
     fetchTermsLink();
   }, []);
 
+
+   const [landingPageData, setLandingPageData] = useState({});
+    useEffect(() => {
+      setLandingPageData(JsonData);
+    }, []);
+
   return (
-    <div className="terms-and-conditions">
-      {termsLink ? (
-        <iframe
-          src={termsLink}
-          width="100%"
-          height="110%"
-          title="Terms and Conditions"
-          style={{ border: "none" }}
-        ></iframe>
-      ) : (
-        <p>Loading Privacy Policy...</p>
-      )}
-    </div>
+    <>
+      <Navigation data = {landingPageData.App}/>
+
+      <div className="terms-and-conditions">
+        {termsLink ? (
+          <iframe
+            src={termsLink}
+            width="100%"
+            height="110%"
+            title="Terms and Conditions"
+            style={{ border: "none" }}
+          ></iframe>
+        ) : (
+          <p>Loading Privacy Policy...</p>
+        )}
+      </div>
+    </>
+
   );
 };
 

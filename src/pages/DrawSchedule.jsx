@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { db } from "../utils/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import styles from "./styles/drawSchedule.module.css";
+import JsonData from "../data/data.json";
+import { Navigation } from "../components/navigation";
 
 const DrawSchedule = () => {
   const [schedules, setSchedules] = useState([]);
@@ -24,7 +26,15 @@ const DrawSchedule = () => {
     fetchSchedules();
   }, []);
 
+
+  const [landingPageData, setLandingPageData] = useState({});
+    useEffect(() => {
+      setLandingPageData(JsonData);
+    }, []);
+
   return (
+    <>
+     <Navigation data = {landingPageData.App}/>
     <div className={styles.container}>
       <h1 className={styles.heading}>Draw Schedule</h1>
       <table className={styles.table}>
@@ -46,6 +56,8 @@ const DrawSchedule = () => {
         </tbody>
       </table>
     </div>
+    </>
+
   );
 };
 

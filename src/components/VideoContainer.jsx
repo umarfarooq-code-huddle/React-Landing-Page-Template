@@ -16,9 +16,10 @@ export const VideoContainer = (props) => {
         alignItems: 'center',
         padding: '20px',
         margin: '0 auto',
-        marginTop:isMobile ? '200px':'auto',
+        marginTop:isMobile ? '100px':'auto',
         textAlign: 'center',
-        height: '100vh',
+        height: '60vh',
+        paddingTop: '30vh',
         width: '100%',
         backgroundColor: '#faf0e6',
 

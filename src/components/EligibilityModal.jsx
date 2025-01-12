@@ -125,7 +125,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                                 Select Another
                             </button>
                             <button className={globalStyles.rejectButton} onClick={onClose}>
-                                Reject
+                                Close
                             </button>
                         </div>
                     </div>
