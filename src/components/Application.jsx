@@ -107,7 +107,7 @@ function ApplicationForm() {
         navigate('/');
       }, 1000);
   
-      // Clear the form after successful submission
+      // Clear the form after successful selection
       setLegalName('');
       setRumbleUsername('');
       setSelectedCountry('');

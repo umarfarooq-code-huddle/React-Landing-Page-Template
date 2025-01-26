@@ -23,7 +23,7 @@
   }
   
   .card {
-    background: linear-gradient(135deg, #faf0e6, #f1f1f1);
+    background: linear-gradient(135deg, #fff, #f1f1f1);
     border: 1px solid #ddd;
     border-radius: 10px;
     padding: 20px;

@@ -22,7 +22,7 @@ export const MissionStatement = (props) => {
           height:'20vh',
           paddingTop : '40vh',
           width:'100%',
-          backgroundColor: '#faf0e6',
+          backgroundColor: '#fff',
           // backgroundColor: 'red',
   
         }}
@@ -41,25 +41,25 @@ export const MissionStatement = (props) => {
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+          alignContent:'center',
+
         alignItems: 'center',
-        padding: '200px',
-        margin: '0 auto',
-        textAlign: 'center',
-        height:'40vh',
-        paddingTop : '40vh',
+        textAlign: 'justify',
+        height:'100vh',
+
         width:'100%',
-        backgroundColor: '#faf0e6',
+        backgroundColor: '#fff',
         // backgroundColor: 'red',
+        
+        paddingRight:'20vw',
+        paddingLeft:'20vw',
 
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold',marginBottom: '16px' }}>
+      <h1 style={{color:'#000', fontSize: '58px', fontWeight: 'bold',marginBottom: '12px', textAlign:'left', fontVariantCaps:'normal'}}>
         {props?.data?.title}
       </h1>
-      <p style={{ fontSize: '17px', lineHeight: '1.6', fontStyle:'italic' }}>
+      <p style={{ fontSize: '24px', lineHeight: '1.6', fontStyle:'italic' , marginTop:'5vh'}}>
         {props?.data?.text}
       </p>
     </div>

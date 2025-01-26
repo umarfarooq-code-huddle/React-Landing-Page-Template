@@ -18,7 +18,7 @@ export const Header = () => {
           alignItems: 'center',
           alignContent:'center',
           height: '100vh',
-          backgroundColor: '#faf0e6', // Optional: Set a background color
+          backgroundColor: '#fff', // Optional: Set a background color
         }}
       >
         <img
@@ -41,19 +41,21 @@ export const Header = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '70vh',
-          backgroundColor: '#faf0e6', // Optional: Set a background color
+          height: '80vh',
+          paddingTop:'20vh',
+          // backgroundColor: '#fff', // Optional: Set a background color
+          backgroundColor: '#fff', // Optional: Set a background color
         }}
       >
         <img
           src={logo}
           alt="Logo"
           style={{
-            width: '30vw',
+            width: '35vw',
             height: 'auto',
             objectFit: 'contain',
             borderRadius:'30%',
-            marginTop:'40vh'
+            marginTop:'10vh'
           }}
         />
       </div>

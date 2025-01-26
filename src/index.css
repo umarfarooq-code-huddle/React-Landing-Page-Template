@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #faf0e6;
+  background-color: #fff;
   
 }
 
@@ -38,7 +38,7 @@ code {
 }
 
 .news-card {
-  background: linear-gradient(135deg, #faf0e6, #f1f1f1);
+  background: linear-gradient(135deg, #000, #f1f1f1);
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;

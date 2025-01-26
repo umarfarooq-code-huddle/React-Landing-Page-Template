@@ -14,14 +14,14 @@ export const VideoContainer = (props) => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '20px',
-        margin: '0 auto',
+ 
+
         marginTop:isMobile ? '100px':'auto',
         textAlign: 'center',
-        height: '60vh',
-        paddingTop: '30vh',
+        height: '80vh',
+   
         width: '100%',
-        backgroundColor: '#faf0e6',
+        backgroundColor: 'white',
 
       }}
     >
@@ -36,8 +36,8 @@ export const VideoContainer = (props) => {
           className="intro-video"
         ></iframe>:
         <iframe
-        width="650"
-        height="450 "
+        width="750"
+        height="500 "
         src="https://www.youtube.com/embed/6xffbCOqv8w"
         title="YouTube video player"
         frameBorder="0"

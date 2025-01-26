@@ -14,7 +14,7 @@ export const Features = (props) => {
   const [termsLink, setTermsLink] = useState(""); // Link fetched from Firebase
 
 
-  
+
   const navigate = useNavigate()
   const handleImageClick = (index) => {
     console.log("Here I am")
@@ -33,42 +33,41 @@ export const Features = (props) => {
   };
 
 
-    useEffect(() => {
-      const fetchTermsLink = async () => {
-        try {
-          const docRef = doc(db, "settings", "terms-and-conditions");
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setTermsLink(docSnap.data().link);
-          } else {
-            console.error("Terms and Conditions document does not exist!");
-          }
-        } catch (error) {
-          console.error("Error fetching Terms and Conditions link:", error);
+  useEffect(() => {
+    const fetchTermsLink = async () => {
+      try {
+        const docRef = doc(db, "settings", "terms-and-conditions");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setTermsLink(docSnap.data().link);
+        } else {
+          console.error("Terms and Conditions document does not exist!");
         }
-      };
-  
-      fetchTermsLink();
-    }, []);
-  
+      } catch (error) {
+        console.error("Error fetching Terms and Conditions link:", error);
+      }
+    };
 
-    const [selectors] = useDeviceSelectors(window.navigator.userAgent);
+    fetchTermsLink();
+  }, []);
 
-    // todo: check if it can be done with code instead of react device detect
-    const { isMobile } = selectors;
+
+  const [selectors] = useDeviceSelectors(window.navigator.userAgent);
+
+  // todo: check if it can be done with code instead of react device detect
+  const { isMobile } = selectors;
 
   const renderModalContent = () => {
     switch (modalStep) {
       case 0:
         return (
           <>
-            <h2>Terms & Conditions</h2>
+             <h1 style={{fontVariantCaps:'normal !important', fontSize:'32px', fontWeight:'bold', color:'#000'}}>Terms & Conditions</h1>
             <div
               style={{
                 background: "#fff",
                 padding: "20px",
                 borderRadius: "5px",
-                maxWidth: "800px",
                 maxHeight: "80vh",
                 overflowY: "hidden",
                 textAlign: "left",
@@ -107,13 +106,16 @@ export const Features = (props) => {
       case 2:
         return (
           <>
-            <h2>Subscribe to our Rumble Channel</h2>
+             <h1 style={{fontVariantCaps:'normal !important', fontSize:'32px', fontWeight:'bold', color:'#000'}}>Support our Rumble Channel</h1>
             <p>
-              To proceed, please subscribe to our Rumble channel. Once subscribed, click "Continue".
+            Please visit our Rumble channel and consider following to help us grow our community and help fund future grants.
+
+            <br />
+            Once you visit our channel you can return and continue to the next step
             </p>
-            <br/>
+            <br />
             <a href="https://rumble.com/c/c-6750781" target="_blank" rel="noopener noreferrer">
-            https://rumble.com/c/c-6750781  
+              https://rumble.com/c/c-6750781
             </a>
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <button
@@ -135,9 +137,12 @@ export const Features = (props) => {
       case 1:
         return (
           <>
-            <h2>Subscribe to our YouTube Channel</h2>
+            <h1 style={{fontVariantCaps:'normal !important', fontSize:'32px', fontWeight:'bold', color:'#000'}}>Support Our 
+            YouTube Channel</h1>
             <p>
-              To proceed, please subscribe to our YouTube channel. Once subscribed, click "Continue".
+            Please visit our YouTube channel and consider subscribing to help us grow our community and help fund future grants
+            <br/>
+            Once you visit our channel you can return and continue to the next step
             </p>
             <a
               href="https://www.youtube.com/@GrantYourWishFoundation"
@@ -160,13 +165,13 @@ export const Features = (props) => {
             >
               Continue
             </button>
-            
+
           </>
         );
       case 3:
         return (
           <>
-            <h2>Navigate to Application</h2>
+             <h1 style={{fontVariantCaps:'normal !important', fontSize:'32px', fontWeight:'bold', color:'#000'}}>Navigate to Application</h1>
             <p>All steps are complete! Click the button below to proceed to the application form.</p>
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <button
@@ -192,17 +197,20 @@ export const Features = (props) => {
 
   return (
     <div style={{
-      height:'100vh',
-      display:'flex',
-      justifyContent:'center',
-      alignContent:'center',
-      alignItems:'center',
-      marginTop:isMobile ? '40vh' : 'auto',
+      height: '80vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignContent: 'center',
+      alignItems: 'center',
+      marginTop: isMobile ? '40vh' : 'auto',
     }}>
-      <div id="features" className="text-center" style={{ background: "#faf0e6", height: "auto" }}>
+      <div id="features" className="text-center" style={{ background: "#fff", height: "auto" }}>
         <div className="container">
           <div className="col-md-10 col-md-offset-1 section-title">
-            <h2>Our Process</h2>
+          <h1 style={{color:'#000',lineHeight:'', fontSize: '58px', fontWeight: 'bold',marginBottom: '12px', textAlign:'left', fontVariantCaps:'normal',paddingLeft:'25px'}}>
+        Our Process
+      </h1>
+
           </div>
           <div className="features-container">
             {props.data
@@ -216,10 +224,10 @@ export const Features = (props) => {
                   }}
                   onClick={() => handleImageClick(i)}
                 >
-                  <h3>{d.title}</h3>
+                  <h3 style={{ fontSize: '24px' }}>{d.title}</h3>
                   <p>{d.text1}
-<br/>
-{d.text2 ? d.text2 :' _'}
+                    <br />
+                    {d.text2 && d.text2}
 
                   </p>
                   <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} />
