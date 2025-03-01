@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../utils/firebase";
 import { collection, getDocs } from "firebase/firestore";
-import styles from "./styles/newsFeed.module.css";
 import JsonData from "../data/data.json";
 import { Navigation } from "../components/navigation";
 
@@ -29,36 +28,89 @@ const NewsFeed = () => {
   }, []);
 
   const [landingPageData, setLandingPageData] = useState({});
-    useEffect(() => {
-      setLandingPageData(JsonData);
-    }, []);
+  useEffect(() => {
+    setLandingPageData(JsonData);
+  }, []);
 
+  const styles = {
+    container: {
+      padding: "20px",
+      fontFamily: "'Arial', sans-serif",
+      minHeight: "100vh",
+      marginTop: "10vh",
+      fontFamily: "Rockwell, serif",
+    },
+    heading: {
+      textAlign: "center",
+      fontSize: "5rem",
+      fontWeight: "bold",
+      marginBottom: "40px",
+      color: "#333",
+      fontFamily: "Rockwell, serif",
+    },
+    newsGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+      gap: "20px",
+    },
+    card: {
+      background: "linear-gradient(135deg, #fff, #f1f1f1)",
+      border: "1px solid #ddd",
+      borderRadius: "10px",
+      padding: "20px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      transition: "transform 0.3s ease, boxShadow 0.3s ease",
+      cursor: "pointer",
+      overflow: "hidden",
+    },
+    cardHover: {
+      transform: "scale(1.05)",
+      boxShadow: "0 6px 12px rgba(0, 0, 0, 0.2)",
+    },
+    cardTitle: {
+      fontSize: "2rem",
+      fontWeight: "600",
+      color: "#333",
+      fontFamily: "Rockwell, serif",
+      marginBottom: "10px",
+    },
+    cardContent: {
+      fontSize: "1rem",
+      color: "#666",
+      textAlign: "justify",
+      lineHeight: "1.6",
+      marginBottom: "20px",
+      fontFamily: "Rockwell, serif",
+    },
+    cardDate: {
+      fontSize: "0.9rem",
+      color: "#999",
+    },
+  };
 
   return (
     <>
-    <Navigation data = {landingPageData.App}/>
-    <div className={styles.container}>
-      <h1 className={styles.heading}>News Feed</h1>
-      <div className={styles.newsGrid}>
-        {news.map((article) => (
-          <div
-            key={article.id}
-            className={styles.card}
-            onClick={() => article.link && window.open(article.link, "_blank")}
-            title={article.link ? `Go to link: ${article.link}` : ""}
-            style={{ cursor: article.link ? "pointer" : "default" }}
-          >
-            <h2 className={styles.cardTitle}>{article.title}</h2>
-            <p className={styles.cardContent}>{article.content}</p>
-            <small className={styles.cardDate}>
-              Published on: {new Date(article.date).toLocaleDateString()}
-            </small>
-          </div>
-        ))}
+      <Navigation data={landingPageData.App} />
+      <div style={styles.container}>
+        <h1 style={styles.heading}>News Feed</h1>
+        <div style={styles.newsGrid}>
+          {news.map((article) => (
+            <div
+              key={article.id}
+              style={styles.card}
+              onClick={() => article.link && window.open(article.link, "_blank")}
+              title={article.link ? `Go to link: ${article.link}` : ""}
+            >
+              <h2 style={styles.cardTitle}>{article.title}</h2>
+              <p style={styles.cardContent}>{article.content}</p>
+              <small style={styles.cardDate}>
+                Published on: {new Date(article.date).toLocaleDateString()}
+              </small>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
     </>
-
   );
 };
 

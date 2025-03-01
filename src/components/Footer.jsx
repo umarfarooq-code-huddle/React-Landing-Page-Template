@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="footer" style={{backgroundColor:'#000', color:'white'}}>
-      <p>&copy; 2024 Grant Your Wish Foundation</p>
-      <Link to="/terms-and-conditions" className="footer-link">
+      <p>&copy; 2025 Grant Your Request Foundation</p>
+      <Link style={{color:'white'}} to="/terms-and-conditions" className="footer-link">
         Terms and Conditions
       </Link>
 <br/>
-      <Link to="/privacy-policy" className="footer-link">
+      <Link style={{color:'white'}} to="/privacy-policy" className="footer-link">
         Privacy Policy
       </Link>
     </footer>

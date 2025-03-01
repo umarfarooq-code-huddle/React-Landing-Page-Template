@@ -16,49 +16,51 @@ export const Navigation = (props) => {
             className="navbar-toggle collapsed"
             data-toggle="collapse"
             data-target="#bs-example-navbar-collapse-1"
-            style={{color:'white'}}
+            style={{color:'white', fontFamily:'Rockwell, sarif'}}
           >
             {" "}
             <span className="sr-only">Toggle navigation</span>{" "}
           
           </button>
-          {/* Logo and Title */}
-          <a className="navbar-brand page-scroll" href="/" style={{color:'white'}}>
-          {/* <img
-            src={"https://i.ibb.co/rHP6zz7/black.jpg"}
-            alt="Logo"
-            style={{ height: "60px", marginRight: "10px",marginTop:"-20px", verticalAlign: "middle" }}
-          />{" "} */}
-            {props.data ? props.data.title : "Grant Your Wish Foundation"}
-          </a>{" "}
-        </div>
+  
 
-        <div
-          className="collapse navbar-collapse"
-          id="bs-example-navbar-collapse-1"
-        >
-          <ul className="nav navbar-nav navbar-right">
-            <li>
-              <a href="/#about" className="page-scroll" style={{color:'white'}}>
-                About us
-              </a>
-            </li>
-            <li>
-              <a href="/#features" className="page-scroll"
-              style={{color:'white'}}>
-                Our Process
-              </a>
-            </li>
+                <a className="navbar-brand page-scroll" href="/" style={{color:'white', fontFamily:'Rockwell, sarif'}}>
+                {props.data ? (
+                  <>
+                  {props.data.title}
+                  </>
+                ) : (
+                  "Grant Your Request Foundation"
+                )}
+                </a>{" "}
+              </div>
 
-            <li onClick={()=>{navigate("/news-feed")}} className="page-scroll">
+              <div
+                className="collapse navbar-collapse"
+                id="bs-example-navbar-collapse-1"
+              >
+                <ul className="nav navbar-nav navbar-right">
+                <li>
+                  <a href="/#about" className="page-scroll" style={{color:'white', fontFamily:'Rockwell, sarif'}}>
+                  About us
+                  </a>
+                </li>
+                <li>
+                  <a href="/#features" className="page-scroll"
+                  style={{color:'white', fontFamily:'Rockwell, sarif'}}>
+                  Our Process
+                  </a>
+                </li>
+
+                <li onClick={()=>{navigate("/news-feed")}} className="page-scroll">
             <a  className="page-scroll"
-            style={{color:'white'}}>
+            style={{color:'white', fontFamily:'Rockwell, sarif'}}>
                News Feed
               </a>
             </li>
 
             <li onClick={()=>{navigate("/draw-schedule")}} className="page-scroll">
-            <a  className="page-scroll" style={{color:'white'}}>
+            <a  className="page-scroll" style={{color:'white', fontFamily:'Rockwell, sarif'}}>
               Drawing Schedule
               </a>
             </li>

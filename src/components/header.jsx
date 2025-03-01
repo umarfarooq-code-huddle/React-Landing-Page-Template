@@ -1,64 +1,43 @@
 import React from "react";
 import logo from "../assets/landingAssets/image.png";
-import { useDeviceSelectors } from "react-device-detect";
+import bg from "../assets/landingAssets/bg.png";
 
 export const Header = () => {
-
-  const [selectors] = useDeviceSelectors(window.navigator.userAgent);
-
-  // todo: check if it can be done with code instead of react device detect
-  const { isMobile } = selectors;
-
-  if(isMobile){
-    return (
-      <div
+  return (
+    <div
+      style={{
+        display: "flex",
+        marginTop:'10vh',
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "90vh",
+        textAlign: "center",
+        
+        padding: "20px",
+      }}
+    >
+      <h1
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignContent:'center',
-          height: '100vh',
-          backgroundColor: '#fff', // Optional: Set a background color
+          fontSize: "clamp(36px,42px,48px)",
+          fontWeight: "normal",
+          color: "#111",
+          fontFamily: "Rockwell, serif",
+          lineHeight: "1.2",
         }}
       >
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            width: '40vw',
-            height: 'auto',
-            objectFit: 'contain',
-            borderRadius:'30%',
-          }}
-        />
-      </div>
-    );
-  }else{
-
-    return (
-      <div
+        Bringing Hope Through <br /><span style={{ color: "#007bff" }}>Blockchain</span> Powered Grants
+      </h1>
+      <img
+        src={logo}
+        alt="Logo"
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '80vh',
-          paddingTop:'20vh',
-          // backgroundColor: '#fff', // Optional: Set a background color
-          backgroundColor: '#fff', // Optional: Set a background color
+          width: "clamp(250px,25vw, 500px)",
+          height: "auto",
+          objectFit: "contain",
+          marginTop: "3vh",
         }}
-      >
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            width: '35vw',
-            height: 'auto',
-            objectFit: 'contain',
-            borderRadius:'30%',
-            marginTop:'10vh'
-          }}
-        />
-      </div>
-    );
-  }
+      />
+    </div>
+  );
 };

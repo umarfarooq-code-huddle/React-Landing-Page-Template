@@ -1,5 +1,6 @@
 import React from "react";
 import {useDeviceSelectors} from "react-device-detect"
+import bg from "../assets/landingAssets/bg.png";
 
 export const VideoContainer = (props) => {
 
@@ -21,7 +22,7 @@ export const VideoContainer = (props) => {
         height: '80vh',
    
         width: '100%',
-        backgroundColor: 'white',
+
 
       }}
     >

@@ -8,6 +8,8 @@ import { useStates } from './useStates';
 import { db } from '../utils/firebase'; // Import Firestore instance
 import { collection, getDocs } from 'firebase/firestore'; // Firestore methods
 import DrawTypeModal from './DrawTypeModal';
+import  JsonData  from '../data/data.json';
+import { Navigation } from './navigation';
 
 
 function ViewApplications() {
@@ -20,6 +22,7 @@ function ViewApplications() {
     const [selectedCountryFilter, setSelectedCountryFilter] = useState('');
     const [selectedStateFilter, setSelectedStateFilter] = useState('');
     const [drawType, setDrawType] = useState('');
+    const [activeTab, setActiveTab] = useState('all'); // New state for active tab
 
     // Get all countries and states using hooks
     const countries = useCountries();
@@ -31,10 +34,20 @@ function ViewApplications() {
             try {
                 const applicationsCollection = collection(db, 'applications');
                 const applicationsSnapshot = await getDocs(applicationsCollection);
-                const applicationsData = applicationsSnapshot.docs.map((doc) => ({
-                    id: doc.id, // Include document ID
-                    ...doc.data(),
-                }));
+                const applicationsData = applicationsSnapshot.docs.map((doc, index) => {
+                    const data = doc.data();
+                    const submissionDate = data.submittedAt ? new Date(data.submittedAt) : new Date();
+                    const expiryDate = new Date(submissionDate);
+                    expiryDate.setDate(expiryDate.getDate() + 365);
+                    const daysRemaining = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                    return {
+                        id: doc.id, // Include document ID
+                        srNo: index + 1, // Add serial number
+                        daysRemaining, // Add days remaining
+                        drawTypes: data.drawTypes || [], // Initialize drawTypes array
+                        ...data,
+                    };
+                });
                 setApplications(applicationsData);
                 setFilteredApps(applicationsData);
             } catch (error) {
@@ -86,9 +99,12 @@ function ViewApplications() {
                 );
             }
 
+            // Filter out applications already selected for the current draw type
+            eligibleApps = eligibleApps.filter((app) => !app.drawTypes.includes(drawType));
+
             const randomApp = eligibleApps[Math.floor(Math.random() * eligibleApps.length)];
             if (randomApp) {
-                await updateDoc(doc(db, 'applications', randomApp.id), { selected: true, drawType });
+                await updateDoc(doc(db, 'applications', randomApp.id), { drawTypes: [...randomApp.drawTypes, drawType] });
             }
             setSelectedApp(randomApp || null);
             setLoading(false);
@@ -101,11 +117,57 @@ function ViewApplications() {
         setShowModal(true);
     };
 
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        if (tab === 'selected') {
+            setFilteredApps(applications.filter(app => app.selected));
+        } else {
+            setFilteredApps(applications);
+        }
+    };
+
+    const [landingPageData, setLandingPageData] = useState({});
+    useEffect(() => {
+      setLandingPageData(JsonData);
+    }, []);
+
     return (
-        <div className={styles.container}>
+        <>
+              <Navigation data = {landingPageData.App}/>
+        <div className={styles.container} style={{marginTop: "5vh"}}>
             <h1 className={styles.title}>Applications List</h1>
 
-            {/* Filters */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <button
+                    style={{
+                        padding: '10px 20px',
+                        margin: '0 10px',
+                        backgroundColor: activeTab === 'all' ? '#007bff' : '#f8f9fa',
+                        color: activeTab === 'all' ? '#fff' : '#000',
+                        border: '1px solid #007bff',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => handleTabChange('all')}
+                >
+                    All Applications
+                </button>
+                <button
+                    style={{
+                        padding: '10px 20px',
+                        margin: '0 10px',
+                        backgroundColor: activeTab === 'selected' ? '#007bff' : '#f8f9fa',
+                        color: activeTab === 'selected' ? '#fff' : '#000',
+                        border: '1px solid #007bff',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => handleTabChange('selected')}
+                >
+                    Selected Applications
+                </button>
+            </div>
+
             <div className={styles.filters}>
                 <input
                     type="text"
@@ -154,52 +216,71 @@ function ViewApplications() {
                     className={styles.filterInput}
                 />
             </div>
+                        <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>Legal Name</th>
+                                    <th>State of Residency</th>
+                                    <th>Country of Residency</th>
+                                    <th>Rumble Username</th>
+                                    <th>Youtube Username</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Issues</th>
+                                    <th>Selected</th>
+                                    <th>Expires In</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredApps.length > 0 ? (
+                                    filteredApps.map((app) => (
+                                        <tr key={app.id}>
+                                            <td>{app.srNo}</td>
+                                            <td>{app.legalName}</td>
+                                            <td>{app.selectedState || 'N/A'}</td>
+                                            <td>{app.rumbleUserName || 'N/A'}</td>
+                                            <td>{app.youtubeUserName || 'N/A'}</td>
+                                            <td>{app.gmail || 'N/A'}</td>
+                                            <td>{app.phone || 'N/A'}</td>
+                                            <td>{app.selectedCountry || 'N/A'}</td>
+                                            <td>
+                                                {app.issues.map((issue, idx) => (
+                                                    <div key={idx}>{issue}</div>
+                                                ))}
+                                            </td>
+                                            <td>
+                                                {app?.drawTypes?.map((type, idx) => (
+                                                    <span
+                                                        key={idx}
+                                                        style={{
+                                                            display: 'inline-block',
+                                                            padding: '5px 10px',
+                                                            borderRadius: '15px',
+                                                            backgroundColor: '#28a745',
+                                                            color: '#fff',
+                                                            fontWeight: 'bold',
+                                                            marginRight: '5px'
+                                                        }}
+                                                    >
+                                                        {String(type)}
+                                                    </span>
+                                                ))}
+                                            </td>
+                                            <td>{app.daysRemaining} days</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="11" className={styles.noData}>
+                                            No applications found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
 
-            {/* Applications List */}
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th>Legal Name</th>
-                        <th>State of Residency</th>
-                        <th>Country of Residency</th>
-                        <th>Rumble Username</th>
-                        <th>Youtube Username</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Issues</th>
-                        <th>Selected</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredApps.length > 0 ? (
-                        filteredApps.map((app) => (
-                            <tr key={app.id}>
-                                <td>{app.legalName}</td>
-                                <td>{app.selectedState || 'N/A'}</td>
-                                <td>{app.rumbleUserName || 'N/A'}</td>
-                                <td>{app.youtubeUserName || 'N/A'}</td>
-                                <td>{app.gmail || 'N/A'}</td>
-                                <td>{app.phone || 'N/A'}</td>
-                                <td>{app.selectedCountry || 'N/A'}</td>
-                                <td>
-                                    {app.issues.map((issue, idx) => (
-                                        <div key={idx}>{issue}</div>
-                                    ))}
-                                </td>
-                                <td>{app.selected ? app.drawType : 'No'}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="9" className={styles.noData}>
-                                No applications found.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-
-            {/* Random Select Button */}
+                        {/* Random Select Button */}
             <button
                 className={globalStyles.selectButton}
                 onClick={() => {
@@ -228,6 +309,7 @@ function ViewApplications() {
                 />
             )}
         </div>
+        </>
     );
 }
 

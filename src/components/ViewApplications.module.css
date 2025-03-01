@@ -3,7 +3,9 @@
 .container {
     font-family: 'Roboto', sans-serif;
     padding: 40px;
-    background-color: #f5f7fa;
+
+  padding-top: '200px';
+  margin-top: '100px';
   }
   
   .title {
@@ -11,6 +13,7 @@
     margin-bottom: 30px;
     color: #333;
     font-size: 32px;
+    margin-top: '100px';
   }
   
   .filters {
@@ -42,7 +45,7 @@
   .table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #fff;
+
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -65,10 +68,12 @@
   
   .table tbody tr:nth-child(even) {
     background-color: #e7dede;
+    
   }
   
   .table tbody tr:hover {
-    background-color: #f1f1f1;
+    transform: scale(1.02);
+    transition: transform 0.3s ease-in-out;
   }
   
   .noData {

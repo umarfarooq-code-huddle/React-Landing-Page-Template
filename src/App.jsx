@@ -14,6 +14,7 @@ import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/Privacy Policy';
 import AdminAddTermsAndConditionsLink from './pages/AdminAddTermsAndConditionsLink';
 import AdminAddPrivacyLink from './pages/AdminAddPrivacyLink';
+import AdminLinks from './pages/AdminLinks';
 
 function App() {
   return (
@@ -70,6 +71,14 @@ function App() {
             </ProtectedRoute>
           }
           />
+        <Route
+          path="/admin-links"
+          element={
+            <ProtectedRoute>
+              <AdminLinks />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
           </main>
     </Router>

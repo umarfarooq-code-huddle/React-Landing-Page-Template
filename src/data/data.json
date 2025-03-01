@@ -1,15 +1,15 @@
 {
   
   "App": {
-    "title": "Grant Your Wish Foundation"
+    "title": "Grant Your Request Foundation"
   },
   "Header": {
-    "title": "Grant Your Wish Foundation",
+    "title": "Grant Your Request Foundation",
     "paragraph": "A decentralized grant platform leveraging blockchain technology to transparently manage and distribute funding for innovative projects."
   },
   "About": {
     "title": "About Us",
-    "paragraph": "Grant Your Wish Foundation is a decentralized platform where individuals can apply for grants to fulfill their dreams and aspirations. Built on the XRPL (XRP Ledger) blockchain, our foundation ensures transparent, fast, and secure transactions, empowering those in need without the constraints of traditional financial systems. By leveraging blockchain technology, we create an open, trustless environment that eliminates intermediaries and reduces costs, allowing more funds to go directly to those who need them most. We believe in equal opportunities for all, and our mission is to harness technology to make that a reality.",
+    "paragraph": "Grant Your Request Foundation is a decentralized platform where individuals can apply for grants to fulfill their dreams and aspirations. Built on the XRPL (XRP Ledger) blockchain, our foundation ensures transparent, fast, and secure transactions, empowering those in need without the constraints of traditional financial systems. By leveraging blockchain technology, we create an open, trustless environment that eliminates intermediaries and reduces costs, allowing more funds to go directly to those who need them most. We believe in equal opportunities for all, and our mission is to harness technology to make that a reality.",
     "Why": [
       "Decentralized and transparent grant process",
       "Secure and efficient blockchain-based transactions",
@@ -192,7 +192,7 @@
 
     },
     {
-      "icon": "https://i.ibb.co/m4Tb5cP/output-onlinepngtools-3.png",
+      "icon": "https://i.ibb.co/Vcrd6FVt/image-47.png",
       "title": "Step 4",
       "text1": "Submit your wish",
       "buttonText":"Wish"
@@ -202,6 +202,6 @@
   ]
   ,"MissionStatement":{
     "title":"Mission Statement",
-    "text": "The Grant Your Wish Foundation was established with the mission of \"Empowering individuals to enhance their quality of life.\" Our goal is to bring hope and positive transformation to those in need by fulfilling wishes through an innovative, blockchain-based \"Automated Grant Selection System.\" This user-friendly online platform ensures that every qualified applicant has an equal opportunity to receive financial assistance through a transparent, randomized selection process."
+    "text": "The Grant Your Request Foundation was established with the mission of \"Empowering individuals to enhance their quality of life.\" Our goal is to bring hope and positive transformation to those in need by fulfilling wishes through an innovative, blockchain-based \"Automated Grant Selection System.\" This user-friendly online platform ensures that every qualified applicant has an equal opportunity to receive financial assistance through a transparent, randomized selection process."
   }
 }

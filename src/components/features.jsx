@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { db } from "../utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import bg from "../assets/landingAssets/bg.png";
 import { useDeviceSelectors } from "react-device-detect";
 
 
@@ -196,46 +197,131 @@ export const Features = (props) => {
   };
 
   return (
-    <div style={{
-      height: '80vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignContent: 'center',
-      alignItems: 'center',
-      marginTop: isMobile ? '40vh' : 'auto',
-    }}>
-      <div id="features" className="text-center" style={{ background: "#fff", height: "auto" }}>
-        <div className="container">
-          <div className="col-md-10 col-md-offset-1 section-title">
-          <h1 style={{color:'#000',lineHeight:'', fontSize: '58px', fontWeight: 'bold',marginBottom: '12px', textAlign:'left', fontVariantCaps:'normal',paddingLeft:'25px'}}>
-        Our Process
-      </h1>
+    <div
+      id="process"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        paddingTop: "8vh",
+        padding: isMobile ? "20px" : "0vw",
+        fontFamily: "Rockwell, serif",
+        color: "#000",
+        textAlign: "left",
+      }}
+    >
+      {/* Process Section */}
+      <div
+        style={{
+          width: isMobile ? "100%" : "90%",
+          height: "70vh",
+          paddingTop: "40px",
+          paddingBottom: "30px",
+        }}
+      >
+        {/* Heading */}
+        <h1
+          style={{
+            fontSize: "48px",
+            fontWeight: "bold",
+            color: "#222",
+            marginBottom: "5px",
+          }}
+        >
+          <span style={{ color: "#222", fontWeight: "600" }}>Our</span>{" "}
+          <span style={{ color: "#3498db", fontWeight: "600", }}>
+            Process
+          </span>
+        </h1>
 
-          </div>
-          <div className="features-container">
-            {props.data
-              ? props.data.map((d, i) => (
+        {/* Underline */}
+        <div
+          style={{
+            width: "120px",
+            height: "4px",
+            backgroundColor: "#3498db",
+            marginBottom: "5vh",
+          }}
+        ></div>
+
+        {/* Instruction Text */}
+        <p
+          style={{
+            fontSize: "20px",
+            fontStyle: "italic",
+            textAlign: "center",
+            color: "#555",
+            marginBottom: "5vh",
+            fontWeight:"bold",
+          }}
+        >
+          Click the Icons Below to Start Your Application
+        </p>
+
+        {/* Steps Container */}
+        <div
+          className="features-container"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: isMobile ? "5vw" : "10vw",
+            textAlign: "center",
+          }}
+        >
+          {props.data
+            ? props.data.map((d, i) => (
                 <div
                   key={`${d.title}-${i}`}
                   className={`feature-item ${i <= currentStep ? "active" : "inactive"}`}
                   style={{
-                    opacity: i <= currentStep ? 1 : 0.5,
+                  
                     pointerEvents: i === currentStep ? "auto" : "none",
                   }}
                   onClick={() => handleImageClick(i)}
                 >
-                  <h3 style={{ fontSize: '24px' }}>{d.title}</h3>
-                  <p>{d.text1}
+                  <h3
+                    style={{
+                      fontSize: "32px",
+                      color: i === currentStep ? "#007BFF" : "#000",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Step {i + 1}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "20px",
+                      
+                      fontWeight: i === currentStep ? "bold" : "normal",
+                      color: i === currentStep ? "black" : "grey",
+
+                    }}
+                  >
+                    {d.text1}
                     <br />
                     {d.text2 && d.text2}
-
                   </p>
-                  <img src={d.icon} style={d.imgStyle} alt={`Step ${i + 1}`} />
+
+                  {/* Step Icons */}
+                  <img
+                    src={d.icon}
+                    style={{
+                      width: "auto",
+                      height: "50px",
+            
+                    }}
+                    alt={`Step ${i + 1}`}
+                  />
                 </div>
               ))
-              : "Loading..."}
-          </div>
+            : "Loading..."}
         </div>
+
+        {/* Terms & Conditions Button */}
+       
       </div>
 
       {/* Modal */}

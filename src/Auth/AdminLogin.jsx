@@ -13,8 +13,8 @@ const AdminLogin = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect to the admin page
-      window.location.href = "/applications";
+      // Redirect to the admin links page
+      window.location.href = "/admin-links";
     } catch (err) {
       setError('Invalid email or password');
     }

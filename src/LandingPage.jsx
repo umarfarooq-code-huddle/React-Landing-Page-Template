@@ -11,7 +11,7 @@ import { Contact } from "./components/contact";
 import JsonData from "./data/data.json";
 import SmoothScroll from "smooth-scroll";
 import "./App.css";
-import { MissionStatement } from "./components/MissionStatement";
+import  MissionStatement  from "./components/MissionStatement";
 import { VideoContainer } from "./components/VideoContainer";
 import Footer from "./components/Footer";
 
@@ -31,7 +31,6 @@ const LandingPage = () => {
       <Navigation data = {landingPageData.App}/>
       <Header data={landingPageData.Header} />
       <MissionStatement data={landingPageData.MissionStatement}/>
-      <VideoContainer/>
       <About data={landingPageData.About} />
       <Features data={landingPageData.Features} />
       <Footer/>
