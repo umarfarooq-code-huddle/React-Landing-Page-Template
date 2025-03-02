@@ -3,23 +3,20 @@ import styles from './ApplicationForm.module.css';
 import globalStyles from '../global.module.css';
 import { statesList, majorCountries, issuesList } from './data'; // Shared data
 import { useCountries } from './useCountries';
+import logo from "../assets/landingAssets/image.png";
 import { useStates } from './useStates';
 
 function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
     const [selectedState, setSelectedState] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
     const [otherCountry, setOtherCountry] = useState('');
-    const countries = useCountries()
-    const states = useStates(selectedCountry)
+    const countries = useCountries();
+    const states = useStates(selectedCountry);
     const [issues, setIssues] = useState([]);
 
     const handleIssueChange = (event) => {
         const { value, checked } = event.target;
-        if (checked) {
-            setIssues([...issues, value]);
-        } else {
-            setIssues(issues.filter((issue) => issue !== value));
-        }
+        setIssues(checked ? [...issues, value] : issues.filter((issue) => issue !== value));
     };
 
     const handleSubmit = (event) => {
@@ -71,8 +68,6 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                                 ))}
                             </select>
                         </div>
-
-                      
 
                         {selectedCountry === 'Other' && (
                             <div className={styles.formGroup}>

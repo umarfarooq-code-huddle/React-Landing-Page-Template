@@ -9,24 +9,26 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it's on top of other content */
+    z-index: 2000; /* Ensure it's on top of header and footer */
+    overflow-y: auto; /* Make it scrollable */
 }
 
 /* Modal box */
 .modal {
     background-color: white;
-    padding: 20px;
+    padding: 15px; /* Reduced padding */
     border-radius: 10px;
-    max-width: 500px;
+    max-width: 450px; /* Reduced max-width */
     width: 100%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1100; /* Ensure the modal content is on top of overlay */
+    z-index: 2100; /* Ensure the modal content is on top of overlay */
+    margin: 20px; /* Add margin to avoid touching the edges */
 }
 
 /* Loader (optional for showing the loading state) */
 .loader {
-    font-size: 20px;
+    font-size: 18px; /* Reduced font size */
     font-weight: bold;
-    margin-top: 20px;
+    margin-top: 15px; /* Reduced margin */
     text-align: center;
 }

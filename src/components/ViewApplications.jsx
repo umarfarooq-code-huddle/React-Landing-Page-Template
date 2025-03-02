@@ -9,6 +9,11 @@ import { db } from '../utils/firebase'; // Import Firestore instance
 import { collection, getDocs } from 'firebase/firestore'; // Firestore methods
 import DrawTypeModal from './DrawTypeModal';
 import  JsonData  from '../data/data.json';
+import logo from "../assets/landingAssets/image.png";
+import bg from "../assets/landingAssets/bg.png";
+import FundApplicationModal from './FundApplicationModal'; // Import new modal
+import { jsPDF } from 'jspdf'; // Import jsPDF for generating PDF
+
 import { Navigation } from './navigation';
 
 
@@ -23,6 +28,8 @@ function ViewApplications() {
     const [selectedStateFilter, setSelectedStateFilter] = useState('');
     const [drawType, setDrawType] = useState('');
     const [activeTab, setActiveTab] = useState('all'); // New state for active tab
+    const [showFundModal, setShowFundModal] = useState(false); // New state for fund modal
+    const [fundedApps, setFundedApps] = useState([]); // New state for funded applications
 
     // Get all countries and states using hooks
     const countries = useCountries();
@@ -50,6 +57,8 @@ function ViewApplications() {
                 });
                 setApplications(applicationsData);
                 setFilteredApps(applicationsData);
+                const fundedApplications = applicationsData.filter(app => app.funded);
+                setFundedApps(fundedApplications);
             } catch (error) {
                 console.error('Error fetching applications:', error);
             }
@@ -68,9 +77,14 @@ function ViewApplications() {
         }
 
         setFilteredApps(
-            applications.filter((app) =>
-                app[name]?.toLowerCase().includes(value.toLowerCase())
-            )
+            applications.filter((app) => {
+            if (name === 'issues') {
+                return app.issues.some((issue) =>
+                issue.toLowerCase().includes(value.toLowerCase())
+                );
+            }
+            return app[name]?.toLowerCase().includes(value.toLowerCase());
+            })
         );
     };
 
@@ -121,10 +135,76 @@ function ViewApplications() {
         setActiveTab(tab);
         if (tab === 'selected') {
             setFilteredApps(applications.filter(app => app.selected));
+        } else if (tab === 'funded') {
+            setFilteredApps(fundedApps);
         } else {
             setFilteredApps(applications);
         }
     };
+
+    const handleFundApplication = (app) => {
+        setSelectedApp(app);
+        setShowFundModal(true);
+    };
+
+
+
+
+    const handleFundModalSubmit = async (selectedFields, transactionId) => {
+        const fundedApp = { ...selectedApp, funded: true, transactionId };
+    
+        // Update Firestore
+        await updateDoc(doc(db, "applications", selectedApp.id), { funded: true, transactionId });
+    
+        // Generate PDF receipt
+        const docum = new jsPDF();
+    
+        // Add Background Image
+        const pageWidth = docum.internal.pageSize.getWidth();
+        const pageHeight = docum.internal.pageSize.getHeight();
+        docum.addImage(bg, "PNG", 0, 0, pageWidth, pageHeight); // Full-page background
+    
+        // Add Logo
+        if (logo) {
+            docum.addImage(logo, "PNG", 10, 10, 40, 40); // Adjusted for better aesthetics
+        }
+    
+        // Title Styling (Increase Visibility)
+        docum.setFont("helvetica", "bold");
+        docum.setFontSize(26);
+        docum.setTextColor(0, 0, 0); // Black text for better visibility
+        docum.text("Funding Receipt", pageWidth / 2, 50, { align: "center" });
+    
+        // Transaction Details (Darker Colors for Visibility)
+        docum.setFont("helvetica", "normal");
+        docum.setFontSize(14);
+        docum.setTextColor(50, 50, 50); // Darker gray for improved contrast
+        docum.text(`Transaction ID: ${transactionId}`, 20, 80);
+    
+        // Dynamic Fields with Better Visibility
+        let yPosition = 100;
+        selectedFields.forEach((field) => {
+            docum.setTextColor(30, 30, 30); // Ensures text is readable
+            docum.text(`${field}: ${selectedApp[field]}`, 20, yPosition);
+            yPosition += 10;
+        });
+    
+        // Footer
+        docum.setFontSize(12);
+        docum.setTextColor(80, 80, 80); // Slightly darker gray for clarity
+        docum.text("Thank you for your support!", pageWidth / 2, pageHeight - 20, { align: "center" });
+    
+        // Save PDF
+        docum.save(`receipt_${transactionId}.pdf`);
+    
+        // Move application to funded
+        setFundedApps([...fundedApps, fundedApp]);
+        setFilteredApps(filteredApps.filter((app) => app.id !== selectedApp.id));
+        setShowFundModal(false);
+    };
+    
+    
+    
 
     const [landingPageData, setLandingPageData] = useState({});
     useEffect(() => {
@@ -134,14 +214,14 @@ function ViewApplications() {
     return (
         <>
               <Navigation data = {landingPageData.App}/>
-        <div className={styles.container} style={{marginTop: "5vh"}}>
+        <div className={styles.container} style={{marginTop: "4.5vh"}}>
             <h1 className={styles.title}>Applications List</h1>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '18px' }}>
                 <button
                     style={{
-                        padding: '10px 20px',
-                        margin: '0 10px',
+                        padding: '9px 18px',
+                        margin: '0 9px',
                         backgroundColor: activeTab === 'all' ? '#007bff' : '#f8f9fa',
                         color: activeTab === 'all' ? '#fff' : '#000',
                         border: '1px solid #007bff',
@@ -154,8 +234,8 @@ function ViewApplications() {
                 </button>
                 <button
                     style={{
-                        padding: '10px 20px',
-                        margin: '0 10px',
+                        padding: '9px 18px',
+                        margin: '0 9px',
                         backgroundColor: activeTab === 'selected' ? '#007bff' : '#f8f9fa',
                         color: activeTab === 'selected' ? '#fff' : '#000',
                         border: '1px solid #007bff',
@@ -165,6 +245,20 @@ function ViewApplications() {
                     onClick={() => handleTabChange('selected')}
                 >
                     Selected Applications
+                </button>
+                <button
+                    style={{
+                        padding: '9px 18px',
+                        margin: '0 9px',
+                        backgroundColor: activeTab === 'funded' ? '#007bff' : '#f8f9fa',
+                        color: activeTab === 'funded' ? '#fff' : '#000',
+                        border: '1px solid #007bff',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => handleTabChange('funded')}
+                >
+                    Funded Applications
                 </button>
             </div>
 
@@ -230,6 +324,11 @@ function ViewApplications() {
                                     <th>Issues</th>
                                     <th>Selected</th>
                                     <th>Expires In</th>
+                                    {activeTab === 'selected' && (
+                                                <th>
+                                                  Actions
+                                                </th>
+                                            )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -239,11 +338,11 @@ function ViewApplications() {
                                             <td>{app.srNo}</td>
                                             <td>{app.legalName}</td>
                                             <td>{app.selectedState || 'N/A'}</td>
+                                            <td>{app.selectedCountry || 'N/A'}</td>
                                             <td>{app.rumbleUserName || 'N/A'}</td>
                                             <td>{app.youtubeUserName || 'N/A'}</td>
                                             <td>{app.gmail || 'N/A'}</td>
                                             <td>{app.phone || 'N/A'}</td>
-                                            <td>{app.selectedCountry || 'N/A'}</td>
                                             <td>
                                                 {app.issues.map((issue, idx) => (
                                                     <div key={idx}>{issue}</div>
@@ -255,12 +354,12 @@ function ViewApplications() {
                                                         key={idx}
                                                         style={{
                                                             display: 'inline-block',
-                                                            padding: '5px 10px',
+                                                            padding: '4px 9px',
                                                             borderRadius: '15px',
                                                             backgroundColor: '#28a745',
                                                             color: '#fff',
                                                             fontWeight: 'bold',
-                                                            marginRight: '5px'
+                                                            marginRight: '4px'
                                                         }}
                                                     >
                                                         {String(type)}
@@ -268,11 +367,21 @@ function ViewApplications() {
                                                 ))}
                                             </td>
                                             <td>{app.daysRemaining} days</td>
+                                            {activeTab === 'selected' && (
+                                                <td>
+                                                    <button
+                                                        className={globalStyles.selectButton}
+                                                        onClick={() => handleFundApplication(app)}
+                                                    >
+                                                        Fund
+                                                    </button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="11" className={styles.noData}>
+                                        <td colSpan="12" className={styles.noData}>
                                             No applications found.
                                         </td>
                                     </tr>
@@ -281,7 +390,7 @@ function ViewApplications() {
                         </table>
 
                         {/* Random Select Button */}
-            <button
+            {activeTab==="all" && <button
                 className={globalStyles.selectButton}
                 onClick={() => {
                     setShowDrawTypeModal(true);
@@ -289,7 +398,7 @@ function ViewApplications() {
                 }}
             >
                 Select Random
-            </button>
+            </button>}
 
             {/* Draw Type Modal */}
             {showDrawTypeModal && (
@@ -299,13 +408,22 @@ function ViewApplications() {
                 />
             )}
 
-            {/* Eligibility Modal */}
+            {/* logo Modal */}
             {showModal && (
                 <EligibilityModal
                     onClose={() => setShowModal(false)}
                     onApplyFilter={handleRandomSelect}
                     loading={loading}
                     selectedApp={selectedApp}
+                />
+            )}
+
+            {/* Fund Application Modal */}
+            {showFundModal && (
+                <FundApplicationModal
+                    onClose={() => setShowFundModal(false)}
+                    onSubmit={handleFundModalSubmit}
+                    application={selectedApp}
                 />
             )}
         </div>
