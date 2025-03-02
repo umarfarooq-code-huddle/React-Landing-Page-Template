@@ -27,6 +27,7 @@ function ViewApplications() {
     const [selectedCountryFilter, setSelectedCountryFilter] = useState('');
     const [selectedStateFilter, setSelectedStateFilter] = useState('');
     const [drawType, setDrawType] = useState('');
+    const [drawAmount, setDrawAmount] = useState('');
     const [activeTab, setActiveTab] = useState('all'); // New state for active tab
     const [showFundModal, setShowFundModal] = useState(false); // New state for fund modal
     const [fundedApps, setFundedApps] = useState([]); // New state for funded applications
@@ -114,11 +115,11 @@ function ViewApplications() {
             }
 
             // Filter out applications already selected for the current draw type
-            eligibleApps = eligibleApps.filter((app) => !app.drawTypes.includes(drawType));
+            eligibleApps = eligibleApps.filter((app) => !app.drawTypes.find((dType)=>dType.drawType === drawType));
 
             const randomApp = eligibleApps[Math.floor(Math.random() * eligibleApps.length)];
             if (randomApp) {
-                await updateDoc(doc(db, 'applications', randomApp.id), { drawTypes: [...randomApp.drawTypes, drawType] });
+                await updateDoc(doc(db, 'applications', randomApp.id), { drawTypes: [...randomApp.drawTypes, {drawType,drawAmount}] });
             }
             setSelectedApp(randomApp || null);
             setLoading(false);
@@ -126,7 +127,8 @@ function ViewApplications() {
     };
 
     const handleDrawTypeSelect = (type) => {
-        setDrawType(type);
+        setDrawType(type.drawType);
+        setDrawAmount(type.drawAmount);
         setShowDrawTypeModal(false);
         setShowModal(true);
     };
@@ -134,7 +136,7 @@ function ViewApplications() {
     const handleTabChange = (tab) => {
         setActiveTab(tab);
         if (tab === 'selected') {
-            setFilteredApps(applications.filter(app => app.selected));
+            setFilteredApps(applications.filter(app => app.drawTypes.length > 0));
         } else if (tab === 'funded') {
             setFilteredApps(fundedApps);
         } else {
@@ -359,10 +361,11 @@ function ViewApplications() {
                                                             backgroundColor: '#28a745',
                                                             color: '#fff',
                                                             fontWeight: 'bold',
-                                                            marginRight: '4px'
+                                                            marginRight: '4px',
+                                                            marginBottom: '4px'
                                                         }}
                                                     >
-                                                        {String(type)}
+                                                        {String(type.drawType)} ({type.drawAmount})
                                                     </span>
                                                 ))}
                                             </td>

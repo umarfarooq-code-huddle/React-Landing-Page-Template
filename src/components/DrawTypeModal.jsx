@@ -5,9 +5,10 @@ import globalStyles from '../global.module.css';
 
 function DrawTypeModal({ onClose, onSelect }) {
     const [selectedType, setSelectedType] = useState('');
+    const [drawAmount, setDrawAmount] = useState('');
 
     const handleSelect = () => {
-        onSelect(selectedType);
+        onSelect({drawType : selectedType, drawAmount : drawAmount});
     };
 
     const options = [
@@ -42,6 +43,19 @@ function DrawTypeModal({ onClose, onSelect }) {
                                 <option key={option} value={option}>{option}</option>
                             ))}
                         </select>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="countrySelect">Draw Type</label>
+                        <input
+                            type="number"
+                            id="countrySelect"
+                            value={drawAmount}
+                            onChange={(e) => setDrawAmount(e.target.value)}
+                            required
+                        >
+                            
+                        </input>
                     </div>
 
                     <button type="submit" className={globalStyles.submitButton} onClick={handleSelect}>
