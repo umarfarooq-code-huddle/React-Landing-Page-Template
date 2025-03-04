@@ -26,7 +26,7 @@ export const Header = () => {
           lineHeight: "1.2",
         }}
       >
-        Bringing Hope Through <br /><span style={{ color: "#007bff" }}>Blockchain</span> Powered Grants
+        Bringing Hope Through <br /><span style={{ color: "#3498db  " }}>Blockchain</span> Powered Grants
       </h1>
       <img
         src={logo}

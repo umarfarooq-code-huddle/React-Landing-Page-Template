@@ -65,10 +65,10 @@
     background-color: #e7dede;
 }
 
-.table tbody tr:hover {
+/* .table tbody tr:hover {
     transform: scale(1.02);
     transition: transform 0.3s ease-in-out;
-}
+} */
 
 .noData {
     text-align: center;
@@ -87,11 +87,16 @@
     border-radius: 5px;
     font-size: 18px;
     cursor: pointer;
-    transition: background 0.3s;
+
 }
 
 .selectButton {
     background: linear-gradient(to right, #41ac4f, #c1d5c1);
+}
+
+.selectButton:hover {
+    background: linear-gradient(to right, #007bff, #0056b3);
+    transition: background 0.3s;
 }
 
 .rejectButton {

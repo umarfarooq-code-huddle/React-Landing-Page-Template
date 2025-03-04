@@ -15,6 +15,8 @@ import PrivacyPolicy from './pages/Privacy Policy';
 import AdminAddTermsAndConditionsLink from './pages/AdminAddTermsAndConditionsLink';
 import AdminAddPrivacyLink from './pages/AdminAddPrivacyLink';
 import AdminLinks from './pages/AdminLinks';
+import AdminDrawSchedule from './pages/AdminDrawSchedule';
+import AdminNewsFeed from './pages/AdminNewsFeed';
 
 function App() {
   return (
@@ -76,6 +78,24 @@ function App() {
           element={
             <ProtectedRoute>
               <AdminLinks />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin-draw-schedule"
+          element={
+            <ProtectedRoute>
+              <AdminDrawSchedule />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin-news-feed"
+          element={
+            <ProtectedRoute>
+              <AdminNewsFeed />
             </ProtectedRoute>
           }
         />

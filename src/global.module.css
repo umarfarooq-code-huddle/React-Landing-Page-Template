@@ -26,6 +26,11 @@
     transition: background 0.3s;
     margin-top: 20px;
   }
+
+  .selectButton:hover {
+    background: linear-gradient(to right, #007bff, #0056b3);
+    transition: background 0.3s;
+}
   
   .rejectButton {
     display: block;
