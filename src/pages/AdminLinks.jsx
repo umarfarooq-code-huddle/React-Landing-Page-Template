@@ -33,8 +33,8 @@ const AdminLinks = () => {
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>Admin Panel</h2>
-      <button onClick={() => navigate('/admin-add-news')} style={buttonStyle}>Add News</button>
-      <button onClick={() => navigate('/admin-add-draw')} style={buttonStyle}>Add Draw Schedule</button>
+      <button onClick={() => navigate('/admin-news-feed')} style={buttonStyle}> News Feed</button>
+      <button onClick={() => navigate('/admin-draw-schedule')} style={buttonStyle}>Draw Schedule</button>
       <button onClick={() => navigate('/admin-add-terms-link')} style={buttonStyle}>Add Terms and Conditions Link</button>
       <button onClick={() => navigate('/admin-add-privacy-link')} style={buttonStyle}>Add Privacy Policy Link</button>
       <button onClick={() => navigate('/applications')} style={buttonStyle}>Applications</button>

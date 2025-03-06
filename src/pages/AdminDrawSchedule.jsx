@@ -4,6 +4,8 @@ import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import JsonData from "../data/data.json";
 import { Navigation } from "../components/navigation";
 import { Modal, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 
 const styles = {
   deleteButton: {
@@ -26,6 +28,7 @@ const AdminDrawSchedule = () => {
   const [hovered, setHovered] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -64,6 +67,10 @@ const AdminDrawSchedule = () => {
   const closeModal = () => {
     setModalOpen(false);
     setSelectedScheduleId(null);
+  };
+
+  const navigateToAddDraw = () => {
+    navigate('/admin-add-draw')
   };
 
   const [landingPageData, setLandingPageData] = useState({});
@@ -128,7 +135,15 @@ const AdminDrawSchedule = () => {
         </div>
       </Modal>
       <div style={containerStyle}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+
         <h1 style={headingStyle}>Draw Schedule</h1>
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <Button variant="contained" color="primary" onClick={navigateToAddDraw}>
+          Add Draw
+        </Button>
+      </div>
+        </div>
         <table style={tableStyle}>
           <thead>
             <tr>

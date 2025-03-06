@@ -27,10 +27,13 @@ function ViewApplications() {
     const [selectedCountryFilter, setSelectedCountryFilter] = useState('');
     const [selectedStateFilter, setSelectedStateFilter] = useState('');
     const [drawType, setDrawType] = useState('');
+
+
     const [drawAmount, setDrawAmount] = useState('');
     const [activeTab, setActiveTab] = useState('all'); // New state for active tab
     const [showFundModal, setShowFundModal] = useState(false); // New state for fund modal
     const [fundedApps, setFundedApps] = useState([]); // New state for funded applications
+    const [selectedApplications, setSelectedApplications] = useState([]); // New state for funded applications
 
     // Get all countries and states using hooks
     const countries = useCountries();
@@ -58,8 +61,21 @@ function ViewApplications() {
                 });
                 setApplications(applicationsData);
                 setFilteredApps(applicationsData);
+
+
                 const fundedApplications = applicationsData.filter(app => app.funded);
                 setFundedApps(fundedApplications);
+
+                const mySelecteedApplications = applicationsData.filter((app)=>app.drawTypes.length>0).flatMap(app =>
+                    app.drawTypes.map(draw => ({
+                      ...app,  // Keep all fields
+                      drawTypes: [draw]  // Wrap the single drawType object in an array
+                    }))
+                  );
+                console.log({mySelecteedApplications})
+                setSelectedApplications(mySelecteedApplications)
+
+
             } catch (error) {
                 console.error('Error fetching applications:', error);
             }
@@ -136,7 +152,9 @@ function ViewApplications() {
     const handleTabChange = (tab) => {
         setActiveTab(tab);
         if (tab === 'selected') {
-            setFilteredApps(applications.filter(app => app.drawTypes.length > 0));
+           setFilteredApps(applications.filter((app)=>app.drawTypes.length>0))
+
+
         } else if (tab === 'funded') {
             setFilteredApps(fundedApps);
         } else {
@@ -219,50 +237,53 @@ function ViewApplications() {
         <div className={styles.container} style={{marginTop: "4.5vh"}}>
             <h1 className={styles.title}>Applications List</h1>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '18px' }}>
-                <button
-                    style={{
-                        padding: '9px 18px',
-                        margin: '0 9px',
-                        backgroundColor: activeTab === 'all' ? '#007bff' : '#f8f9fa',
-                        color: activeTab === 'all' ? '#fff' : '#000',
-                        border: '1px solid #007bff',
-                        borderRadius: '5px',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => handleTabChange('all')}
-                >
-                    All Applications
-                </button>
-                <button
-                    style={{
-                        padding: '9px 18px',
-                        margin: '0 9px',
-                        backgroundColor: activeTab === 'selected' ? '#007bff' : '#f8f9fa',
-                        color: activeTab === 'selected' ? '#fff' : '#000',
-                        border: '1px solid #007bff',
-                        borderRadius: '5px',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => handleTabChange('selected')}
-                >
-                    Selected Applications
-                </button>
-                <button
-                    style={{
-                        padding: '9px 18px',
-                        margin: '0 9px',
-                        backgroundColor: activeTab === 'funded' ? '#007bff' : '#f8f9fa',
-                        color: activeTab === 'funded' ? '#fff' : '#000',
-                        border: '1px solid #007bff',
-                        borderRadius: '5px',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => handleTabChange('funded')}
-                >
-                    Funded Applications
-                </button>
-            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '18px', position: 'relative' }}>
+    {['all', 'selected', 'funded'].map((tab) => (
+        <button
+            key={tab}
+            style={{
+                position: 'relative',
+                padding: '9px 18px',
+                margin: '0 9px',
+                backgroundColor: activeTab === tab ? '#007bff' : '#f8f9fa',
+                color: activeTab === tab ? '#fff' : '#000',
+                border: '1px solid #007bff',
+                borderRadius: '5px',
+                cursor: 'pointer'
+            }}
+            onClick={() => handleTabChange(tab)}
+        >
+            {tab === 'all' && 'All Applications'}
+            {tab === 'selected' && 'Selected Applications'}
+            {tab === 'funded' && 'Funded Applications'}
+
+            {/* Circle Count Indicator */}
+            <span
+                style={{
+                    position: 'absolute',
+                    top: '-5px',
+                    right: '-10px',
+                    backgroundColor: activeTab === tab ? '#fff' : '#007bff',
+                    color: activeTab === tab ? '#007bff' : '#fff',
+                    borderRadius: '50%',
+                    width: '22px',
+                    height: '22px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    border: `1px solid ${activeTab === tab ? '#007bff' : '#fff'}`,
+                }}
+            >
+                {tab === 'all' ? applications.length : 
+                 tab === 'selected' ? applications.filter(app => app.drawTypes.length>0).length : 
+                 applications.filter(app => app.funded).length}
+            </span>
+        </button>
+    ))}
+</div>
+
 
             <div className={styles.filters}>
                 <input
@@ -325,6 +346,11 @@ function ViewApplications() {
                                     <th>Phone</th>
                                     <th>Issues</th>
                                     <th>Selected</th>
+                                    {activeTab === 'selected' && (
+                                        <th>
+                                            Amount
+                                        </th>
+                                    )}
                                     <th>Expires In</th>
                                     {activeTab === 'selected' && (
                                                 <th>
@@ -334,62 +360,94 @@ function ViewApplications() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredApps.length > 0 ? (
-                                    filteredApps.map((app) => (
-                                        <tr key={app.id}>
-                                            <td>{app.srNo}</td>
-                                            <td>{app.legalName}</td>
-                                            <td>{app.selectedState || 'N/A'}</td>
-                                            <td>{app.selectedCountry || 'N/A'}</td>
-                                            <td>{app.rumbleUserName || 'N/A'}</td>
-                                            <td>{app.youtubeUserName || 'N/A'}</td>
-                                            <td>{app.gmail || 'N/A'}</td>
-                                            <td>{app.phone || 'N/A'}</td>
-                                            <td>
-                                                {app.issues.map((issue, idx) => (
-                                                    <div key={idx}>{issue}</div>
-                                                ))}
-                                            </td>
-                                            <td>
-                                                {app?.drawTypes?.map((type, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        style={{
-                                                            display: 'inline-block',
-                                                            padding: '4px 9px',
-                                                            borderRadius: '15px',
-                                                            backgroundColor: '#28a745',
-                                                            color: '#fff',
-                                                            fontWeight: 'bold',
-                                                            marginRight: '4px',
-                                                            marginBottom: '4px'
-                                                        }}
-                                                    >
-                                                        {String(type.drawType)} ({type.drawAmount})
-                                                    </span>
-                                                ))}
-                                            </td>
-                                            <td>{app.daysRemaining} days</td>
-                                            {activeTab === 'selected' && (
-                                                <td>
-                                                    <button
-                                                        className={globalStyles.selectButton}
-                                                        onClick={() => handleFundApplication(app)}
-                                                    >
-                                                        Fund
-                                                    </button>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="12" className={styles.noData}>
-                                            No applications found.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
+    {filteredApps.length > 0 ? (
+        (activeTab === 'selected' 
+            ? filteredApps.flatMap(app =>
+                app.drawTypes.map(type => ({
+                    ...app,
+                    drawTypes: [type], // Flatten `drawTypes` for each entry,
+                    drawAmount : type.drawType,
+                    drawType : type.drawType
+                }))
+              ) 
+            : filteredApps
+        ).map((app) => (
+            <tr key={`${app.id}-${app.drawTypes[0]?.drawType || 'no-draw'}`}>
+                <td>{app.srNo}</td>
+                <td>{app.legalName}</td>
+                <td>{app.selectedState || 'N/A'}</td>
+                <td>{app.selectedCountry || 'N/A'}</td>
+                <td>{app.rumbleUserName || 'N/A'}</td>
+                <td>{app.youtubeUserName || 'N/A'}</td>
+                <td>{app.gmail || 'N/A'}</td>
+                <td>{app.phone || 'N/A'}</td>
+                <td>
+                    {app?.issues?.map((issue, idx) => (
+                        <div key={idx}>{issue}</div>
+                    ))}
+                </td>
+                <td>
+                    {app?.drawTypes?.map((type, idx) => (
+                        <span
+                            key={idx}
+                            style={{
+                                display: 'inline-block',
+                                padding: '4px 9px',
+                                borderRadius: '15px',
+                                backgroundColor: '#28a745',
+                                color: '#fff',
+                                fontWeight: 'bold',
+                                marginRight: '4px',
+                                marginBottom: '4px'
+                            }}
+                        >
+                            {activeTab === 'selected' ? type.drawType :`${String(type.drawType)} (${type.drawAmount})`}
+                        </span>
+                    ))}
+                </td>
+
+                {activeTab === 'selected' && 
+                <td>
+                {app?.drawTypes?.map((type, idx) => (
+                    <span
+                        key={idx}
+                        style={{
+                            display: 'inline-block',
+                            padding: '4px 9px',
+                            borderRadius: '15px',
+                            backgroundColor: 'blue',
+                            color: '#fff',
+                            fontWeight: 'bold',
+                            marginRight: '4px',
+                            marginBottom: '4px'
+                        }}
+                    >
+                     {type.drawAmount}
+                    </span>
+                ))}
+            </td>}
+                <td>{app.daysRemaining} days</td>
+                {activeTab === 'selected' && (
+                    <td>
+                        <button
+                            className={globalStyles.selectButton}
+                            onClick={() => handleFundApplication(app)}
+                        >
+                            Fund
+                        </button>
+                    </td>
+                )}
+            </tr>
+        ))
+    ) : (
+        <tr>
+            <td colSpan="12" className={styles.noData}>
+                No applications found.
+            </td>
+        </tr>
+    )}
+</tbody>
+
                         </table>
 
                         {/* Random Select Button */}

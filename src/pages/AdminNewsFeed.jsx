@@ -5,12 +5,19 @@ import JsonData from "../data/data.json";
 import { Navigation } from "../components/navigation";
 import { Delete } from "@mui/icons-material";
 import { Modal, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const AdminNewsFeed = () => {
   const [news, setNews] = useState([]);
   const [hovered, setHovered] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedNewsId, setSelectedNewsId] = useState(null);
+  const navigate = useNavigate();
+
+//navigateToAddNews
+  const navigateToAddNews = () => {
+    navigate("/admin-add-news");
+  };
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -140,7 +147,15 @@ const AdminNewsFeed = () => {
     <>
       <Navigation data={landingPageData.App} />
       <div style={styles.container}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+
         <h1 style={styles.heading}>News Feed</h1>
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <Button variant="contained" color="primary" onClick={navigateToAddNews}>
+          Add News
+        </Button>
+      </div>
+        </div>
         <div style={styles.newsGrid}>
           {news.map((article) => (  
             <div
@@ -152,6 +167,8 @@ const AdminNewsFeed = () => {
               <div style={{display: "flex", justifyContent: "space-between"}}>
 
               <h2 style={styles.cardTitle}>{article.title}</h2>
+
+          
               <button
                 style={{
                   ...styles.deleteButton,
