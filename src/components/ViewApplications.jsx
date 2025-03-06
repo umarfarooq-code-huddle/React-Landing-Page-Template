@@ -118,17 +118,35 @@ function ViewApplications() {
                 );
             }
 
-            if (eligibilityFilters.selectedCountry) {
-                eligibleApps = eligibleApps.filter((app) =>
-                    app.selectedCountry?.toLowerCase().includes(eligibilityFilters.selectedCountry.toLowerCase())
-                );
+            if (eligibilityFilters.selectedCountries) {
+                console.log("filterS",eligibilityFilters.selectedCountries[0].value === 'Select All')
+                if(eligibilityFilters.selectedCountries.length === 1 && eligibilityFilters.selectedCountries[0].value === 'Select All'){
+                    console.log(eligibilityFilters.selectedCountries,"here")
+                }else{
+                    eligibleApps = eligibleApps.filter((app) =>
+                        eligibilityFilters.selectedCountries.some((country) =>
+                            {
+                             const returnValue = app.selectedCountry?.toLowerCase().includes(country.value.toLowerCase());
+
+                             console.log(returnValue, app.selectedCountry)
+
+                             return returnValue
+                            }
+                        )
+                    );
+                }
+                
             }
+
+            console.log("After countries",eligibleApps)
 
             if (eligibilityFilters.issues && eligibilityFilters.issues.length > 0) {
                 eligibleApps = eligibleApps.filter((app) =>
                     app.issues.some((issue) => eligibilityFilters.issues.includes(issue))
                 );
             }
+
+            console.log("after issues",eligibleApps)
 
             // Filter out applications already selected for the current draw type
             eligibleApps = eligibleApps.filter((app) => !app.drawTypes.find((dType)=>dType.drawType === drawType));

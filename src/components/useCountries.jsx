@@ -9,7 +9,8 @@ export function useCountries() {
       try {
         const response = await axios.get('https://restcountries.com/v3.1/all');
         const countryNames = response.data.map((country) => country.name.common);
-        setCountries(countryNames.sort());
+
+        setCountries(['Select All',...countryNames.sort()]);
       } catch (error) {
         console.error('Error fetching countries:', error);
       }

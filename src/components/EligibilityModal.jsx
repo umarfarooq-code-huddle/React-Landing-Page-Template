@@ -2,29 +2,33 @@ import React, { useState } from 'react';
 import { statesList, majorCountries, issuesList } from './data'; // Shared data
 import { useCountries } from './useCountries';
 import { useStates } from './useStates';
+import Select from 'react-select';
 
 function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
     const [selectedState, setSelectedState] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
     const [otherCountry, setOtherCountry] = useState('');
     const countries = useCountries();
-    const states = useStates(selectedCountry);
+    const [selectedCountries, setSelectedCountries] = useState([]);
+    const states = useStates(selectedCountries[0]?.value);
     const [issues, setIssues] = useState([]);
 
+    const [filters, setFilters] = useState();
     const handleIssueChange = (event) => {
         const { value, checked } = event.target;
         setIssues(checked ? [...issues, value] : issues.filter((issue) => issue !== value));
     };
 
+    console.log(selectedCountries)
     const handleSubmit = (event) => {
         event.preventDefault();
 
         const filters = {
             selectedState,
-            selectedCountry: selectedCountry === 'Other' && otherCountry ? otherCountry : selectedCountry,
+            selectedCountries: selectedCountries,
             issues,
         };
-
+        setFilters(filters)
         onApplyFilter(filters);
     };
 
@@ -147,22 +151,28 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                     <form onSubmit={handleSubmit}>
                         <h1 style={styles.title}>Eligibility Criteria</h1>
 
-                        <div style={styles.formGroup}>
+                        <div style={{display:'flex', flexDirection:'column'}}>
                             <label htmlFor="countrySelect" style={styles.formGroupLabel}>Country of Residency</label>
-                            <select
-                                id="countrySelect"
-                                value={selectedCountry}
-                                onChange={(e) => setSelectedCountry(e.target.value)}
-                                required
-                                style={styles.input}
-                            >
-                                <option value="" disabled>-- Select a Country --</option>
-                                {countries.map((country) => (
-                                    <option key={country} value={country}>{country}</option>
-                                ))}
-                            </select>
+                            <Select
+                                isMulti
+                                options={countries.map(country => ({ value: country, label: country }))}
+                                value={selectedCountries}
+                                onChange={(val)=>{
+                                    console.log("value",val)
+                                    const sAll = val.find((a)=>a.value === 'Select All');
+                                    console.log("sAll",sAll)
+                                    if(sAll){
+                                        setSelectedCountries([sAll])
+                                    }else{
+                                        console.log("Setting", val)
+                                        setSelectedCountries(val)
+                                    }
+                                }}
+                                placeholder="Select country/countries"
+                               />
+                                
                         </div>
-                        <div style={styles.formGroup}>
+                        {selectedCountries.length===1 && selectedCountries[0].value !="Select All" && states.length>0 && <div style={styles.formGroup}>
                             <label htmlFor="stateSelect" style={styles.formGroupLabel}>State of Residency</label>
                             <select
                                 id="stateSelect"
@@ -176,7 +186,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                                     <option key={state} value={state}>{state}</option>
                                 ))}
                             </select>
-                        </div>
+                        </div>}
 
                         {selectedCountry === 'Other' && (
                             <div style={styles.formGroup}>
@@ -212,7 +222,14 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                             Apply Filters
                         </button>
 
-                        <button type="button" style={styles.rejectButton} onClick={onClose}>
+                        <button  style={styles.submitButton} onClick={()=>{
+                            setFilters({})
+                            onApplyFilter({})
+                        }}>
+                           Select  Without Filters
+                        </button>
+
+                        <button  style={styles.rejectButton} onClick={onClose}>
                             Close
                         </button>
                     </form>
@@ -227,7 +244,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                         <p><strong>Issues:</strong> {selectedApp.issues.join(', ')}</p>
 
                         <div style={styles.buttonGroup}></div>
-                            <button style={styles.submitButton} onClick={() => onApplyFilter(null, true)}>
+                            <button style={styles.submitButton} onClick={() => onApplyFilter(filters)}>
                                 Select Another
                             </button>
                             <button style={styles.rejectButton} onClick={onClose}>
