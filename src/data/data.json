@@ -9,16 +9,16 @@
   },
   "About": {
     "title": "About Us",
-    "paragraph": "Grant Your Request Foundation is a decentralized platform where individuals can apply for grants to fulfill their dreams and aspirations. Built on the XRPL (XRP Ledger) blockchain, our foundation ensures transparent, fast, and secure transactions, empowering those in need without the constraints of traditional financial systems. By leveraging blockchain technology, we create an open, trustless environment that eliminates intermediaries and reduces costs, allowing more funds to go directly to those who need them most. We believe in equal opportunities for all, and our mission is to harness technology to make that a reality.",
+    "paragraph": "At the Grant Your Request Foundation, we believe in the power of blockchain technology to drive positive change. Our Automated Grant Selection System is more than just a funding platform—it’s a tool for empowerment. By leveraging a fair and transparent selection process, we provide individuals with an equal opportunity to receive the financial support they need. With this innovative system, we are taking a major step toward fulfilling our mission of making financial assistance more accessible and equitable.",
     "Why": [
       "Decentralized and transparent grant process",
       "Secure and efficient blockchain-based transactions",
       "Empowering individuals through direct support"
     ],
     "Why2": [
-      "No intermediaries, ensuring lower costs",
+      "Built on the robust and sustainable XRPL blockchain",
       "Trustless environment for fairness and transparency",
-      "Open to applicants globally"
+      "Harnessing blockchain to make a difference"
         ]
   },
   "Gallery": [
