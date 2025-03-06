@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import styles from './ApplicationForm.module.css';
-import globalStyles from '../global.module.css';
 import { statesList, majorCountries, issuesList } from './data'; // Shared data
 import { useCountries } from './useCountries';
-import logo from "../assets/landingAssets/image.png";
 import { useStates } from './useStates';
 
 function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
@@ -31,22 +28,133 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
         onApplyFilter(filters);
     };
 
+    const styles = {
+        modalOverlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 2000,
+            overflowY: 'auto',
+        },
+        modal: {
+            backgroundColor: 'white',
+            padding: '13.5px',
+            borderRadius: '9px',
+            maxWidth: '405px',
+            width: '100%',
+            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+            zIndex: 2100,
+            margin: '20px',
+        },
+        loader: {
+            fontSize: '16.2px',
+            fontWeight: 'bold',
+            marginTop: '15px',
+            textAlign: 'center',
+        },
+        title: {
+            textAlign: 'center',
+            marginBottom: '40px',
+            color: '#333',
+            fontSize: '32.4px',
+        },
+        formGroup: {
+            marginBottom: '30px',
+        },
+        formGroupLabel: {
+            display: 'block',
+            marginBottom: '8px',
+            color: '#555',
+            fontSize: '16.2px',
+        },
+        input: {
+            width: '100%',
+            padding: '10.8px 13.5px',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            fontSize: '14.4px',
+            transition: 'border-color 0.3s',
+        },
+        sectionTitle: {
+            marginTop: '40px',
+            marginBottom: '20px',
+            color: '#444',
+            fontSize: '21.6px',
+            borderBottom: '2px solid #ddd',
+            paddingBottom: '10px',
+        },
+        checkboxGroup: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            marginBottom: '20px',
+        },
+        checkboxLabel: {
+            width: '48%',
+            marginBottom: '15px',
+            color: '#555',
+            fontSize: '14.4px',
+            display: 'flex',
+            alignItems: 'center',
+        },
+        checkboxInput: {
+            marginRight: '10px',
+            transform: 'scale(1.08)',
+        },
+        submitButton: {
+            display: 'block',
+            width: '100%',
+            padding: '16.2px',
+            background: 'linear-gradient(to right, #36d1dc, #5b86e5)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            fontSize: '18px',
+            cursor: 'pointer',
+            transition: 'background 0.3s',
+            marginTop: '10px',
+        },
+        rejectButton: {
+            display: 'block',
+            width: '100%',
+            padding: '16.2px',
+            background: 'linear-gradient(to right, #cf0937, #b84747)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            fontSize: '18px',
+            marginTop: '10px',
+            cursor: 'pointer',
+            transition: 'background 0.3s',
+        },
+        buttonGroup: {
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
+    };
+
     return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modal}>
-                {loading && <div className={styles.loader}>Loading...</div>}
+        <div style={styles.modalOverlay}>
+            <div style={styles.modal}>
+                {loading && <div style={styles.loader}>Loading...</div>}
 
-                {!loading && !selectedApp && (
+                {(!loading && !selectedApp )&& (
                     <form onSubmit={handleSubmit}>
-                        <h1 className={styles.title}>Eligibility Criteria</h1>
+                        <h1 style={styles.title}>Eligibility Criteria</h1>
 
-                        <div className={styles.formGroup}>
-                            <label htmlFor="countrySelect">Country of Residency</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="countrySelect" style={styles.formGroupLabel}>Country of Residency</label>
                             <select
                                 id="countrySelect"
                                 value={selectedCountry}
                                 onChange={(e) => setSelectedCountry(e.target.value)}
                                 required
+                                style={styles.input}
                             >
                                 <option value="" disabled>-- Select a Country --</option>
                                 {countries.map((country) => (
@@ -54,13 +162,14 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                                 ))}
                             </select>
                         </div>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="stateSelect">State of Residency</label>
+                        <div style={styles.formGroup}>
+                            <label htmlFor="stateSelect" style={styles.formGroupLabel}>State of Residency</label>
                             <select
                                 id="stateSelect"
                                 value={selectedState}
                                 onChange={(e) => setSelectedState(e.target.value)}
                                 required
+                                style={styles.input}
                             >
                                 <option value="" disabled>-- Select a State --</option>
                                 {states.map((state) => (
@@ -70,38 +179,40 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                         </div>
 
                         {selectedCountry === 'Other' && (
-                            <div className={styles.formGroup}>
-                                <label htmlFor="otherCountry">Please specify:</label>
+                            <div style={styles.formGroup}>
+                                <label htmlFor="otherCountry" style={styles.formGroupLabel}>Please specify:</label>
                                 <input
                                     type="text"
                                     id="otherCountry"
                                     value={otherCountry}
                                     onChange={(e) => setOtherCountry(e.target.value)}
                                     required
+                                    style={styles.input}
                                 />
                             </div>
                         )}
 
-                        <h2 className={styles.sectionTitle}>Select Issues</h2>
-                        <div className={styles.checkboxGroup}>
+                        <h2 style={styles.sectionTitle}>Select Issues</h2>
+                        <div style={styles.checkboxGroup}>
                             {issuesList.map((issue) => (
-                                <label key={issue} className={styles.checkboxLabel}>
+                                <label key={issue} style={styles.checkboxLabel}>
                                     <input
                                         type="checkbox"
                                         value={issue}
                                         checked={issues.includes(issue)}
                                         onChange={handleIssueChange}
+                                        style={styles.checkboxInput}
                                     />
                                     {issue}
                                 </label>
                             ))}
                         </div>
 
-                        <button type="submit" className={globalStyles.submitButton}>
+                        <button type="submit" style={styles.submitButton}>
                             Apply Filters
                         </button>
 
-                        <button type="button" className={globalStyles.rejectButton} onClick={onClose}>
+                        <button type="button" style={styles.rejectButton} onClick={onClose}>
                             Close
                         </button>
                     </form>
@@ -115,15 +226,15 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                         <p><strong>Country:</strong> {selectedApp.selectedCountry}</p>
                         <p><strong>Issues:</strong> {selectedApp.issues.join(', ')}</p>
 
-                        <div className={styles.buttonGroup}>
-                            <button className={globalStyles.submitButton} onClick={() => onApplyFilter(null, true)}>
+                        <div style={styles.buttonGroup}></div>
+                            <button style={styles.submitButton} onClick={() => onApplyFilter(null, true)}>
                                 Select Another
                             </button>
-                            <button className={globalStyles.rejectButton} onClick={onClose}>
+                            <button style={styles.rejectButton} onClick={onClose}>
                                 Close
                             </button>
-                        </div>
-                    </div>
+                     </div>
+                   
                 )}
             </div>
         </div>

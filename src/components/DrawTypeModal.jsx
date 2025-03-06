@@ -46,7 +46,7 @@ function DrawTypeModal({ onClose, onSelect }) {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label htmlFor="countrySelect">Draw Type</label>
+                        <label htmlFor="countrySelect">Draw Amount</label>
                         <input
                             type="number"
                             id="countrySelect"
