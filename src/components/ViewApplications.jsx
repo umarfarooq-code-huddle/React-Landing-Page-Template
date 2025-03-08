@@ -19,6 +19,7 @@ import { Navigation } from './navigation';
 
 function ViewApplications() {
     const [applications, setApplications] = useState([]);
+    const [error,setError] = useState(null)
     const [filteredApps, setFilteredApps] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showDrawTypeModal, setShowDrawTypeModal] = useState(false);
@@ -110,13 +111,34 @@ function ViewApplications() {
         setSelectedApp(null);
 
         setTimeout(async () => {
+            try{
+
             let eligibleApps = applications;
 
-            if (eligibilityFilters.selectedState) {
-                eligibleApps = eligibleApps.filter((app) =>
-                    app.selectedState?.toLowerCase().includes(eligibilityFilters.selectedState.toLowerCase())
-                );
+            if (eligibilityFilters.selectedStates) {
+                console.log("filterS",eligibilityFilters.selectedStates[0].value === 'Select All')
+                if(eligibilityFilters.selectedStates.length === 1 && eligibilityFilters.selectedStates[0].value === 'Select All'){
+                    console.log(eligibilityFilters.selectedCountries,"here")
+                }else{
+
+                    console.log(eligibilityFilters.selectedStates)
+                    eligibleApps = eligibleApps.filter((app) =>
+                        eligibilityFilters.selectedStates.some((state) =>
+                            {
+                             const returnValue = app.selectedState?.toLowerCase().includes(state.value.toLowerCase());
+
+                             console.log(returnValue, app.selectedState)
+
+                             return returnValue
+                            }
+                        )
+                    );
+                }
+                
             }
+
+            console.log("After states",eligibleApps)
+
 
             if (eligibilityFilters.selectedCountries) {
                 console.log("filterS",eligibilityFilters.selectedCountries[0].value === 'Select All')
@@ -142,7 +164,16 @@ function ViewApplications() {
 
             if (eligibilityFilters.issues && eligibilityFilters.issues.length > 0) {
                 eligibleApps = eligibleApps.filter((app) =>
-                    app.issues.some((issue) => eligibilityFilters.issues.includes(issue))
+                    {const outerRetValue = app.issues.some((issue) => {
+                        const innverRetVal  = eligibilityFilters.issues.includes(issue)
+                        console.log({innverRetVal,appIssue : issue, app, eligibleIssues :eligibilityFilters.issues})
+                        return innverRetVal;
+                    })
+
+                        console.log({retVale: outerRetValue,issues : app.issues, })
+                        return outerRetValue;
+                    }
+                    
                 );
             }
 
@@ -156,7 +187,18 @@ function ViewApplications() {
                 await updateDoc(doc(db, 'applications', randomApp.id), { drawTypes: [...randomApp.drawTypes, {drawType,drawAmount}] });
             }
             setSelectedApp(randomApp || null);
+            if(!randomApp){
+
+                setError('No Application meets the criteria')
+            }else{
+                setError(null)
+            }
             setLoading(false);
+        }catch(e){
+            setSelectedApp(null);
+            setError('No Application meets the criteria')
+        }
+
         }, 1500);
     };
 
@@ -493,6 +535,7 @@ function ViewApplications() {
                     onClose={() => setShowModal(false)}
                     onApplyFilter={handleRandomSelect}
                     loading={loading}
+                    errorMessage={error}
                     selectedApp={selectedApp}
                 />
             )}

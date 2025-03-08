@@ -265,9 +265,9 @@ export const Features = (props) => {
           className="features-container"
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
-            gap: isMobile ? "5vw" : "10vw",
+            // gap: isMobile ? "5vw" : "5vw",
             textAlign: "center",
           }}
         >
@@ -284,7 +284,7 @@ export const Features = (props) => {
                 >
                   <h3
                     style={{
-                      fontSize: "32px",
+                      fontSize: "30px",
                       color: i === currentStep ? "#007BFF" : "#000",
                       fontWeight: "bold",
                     }}
@@ -293,8 +293,8 @@ export const Features = (props) => {
                   </h3>
                   <p
                     style={{
-                      fontSize: "20px",
-                      
+                      fontSize: "16px",
+
                       fontWeight: i === currentStep ? "bold" : "normal",
                       color: i === currentStep ? "black" : "grey",
 
@@ -302,7 +302,7 @@ export const Features = (props) => {
                   >
                     {d.text1}
                     <br />
-                    {d.text2 && d.text2}
+
                   </p>
 
                   {/* Step Icons */}

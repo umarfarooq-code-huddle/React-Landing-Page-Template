@@ -166,7 +166,7 @@
     {
       "icon": "https://i.ibb.co/Q8XgGDg/output-onlinepngtools.png",
       "title": "Step 1",
-      "text1": "Agree to our terms of use",
+      "text1": "Agree to Our Terms & Conditions",
       "text2": "",
       "buttonText":"Terms ",
       "imgStyle":{"height":"60px","width":"auto"}
@@ -192,7 +192,7 @@
     {
       "icon": "https://i.ibb.co/Vcrd6FVt/image-47.png",
       "title": "Step 4",
-      "text1": "Submit your wish",
+      "text1": "Make Your Request",
       "buttonText":"Wish"
       ,      "imgStyle":{"height":"50px","width":"180px"}
 

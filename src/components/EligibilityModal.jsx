@@ -4,12 +4,13 @@ import { useCountries } from './useCountries';
 import { useStates } from './useStates';
 import Select from 'react-select';
 
-function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
+function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp,errorMessage }) {
     const [selectedState, setSelectedState] = useState('');
     const [selectedCountry, setSelectedCountry] = useState('');
     const [otherCountry, setOtherCountry] = useState('');
     const countries = useCountries();
     const [selectedCountries, setSelectedCountries] = useState([]);
+    const [selectedStates, setSelectedStates] = useState([]);
     const states = useStates(selectedCountries[0]?.value);
     const [issues, setIssues] = useState([]);
 
@@ -24,7 +25,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
         event.preventDefault();
 
         const filters = {
-            selectedState,
+            selectedStates,
             selectedCountries: selectedCountries,
             issues,
         };
@@ -50,7 +51,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
             backgroundColor: 'white',
             padding: '13.5px',
             borderRadius: '9px',
-            maxWidth: '405px',
+            maxWidth: '750px',
             width: '100%',
             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
             zIndex: 2100,
@@ -147,10 +148,10 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
             <div style={styles.modal}>
                 {loading && <div style={styles.loader}>Loading...</div>}
 
-                {(!loading && !selectedApp )&& (
+                {(!loading && (!selectedApp ))&& (
                     <form onSubmit={handleSubmit}>
                         <h1 style={styles.title}>Eligibility Criteria</h1>
-
+                        
                         <div style={{display:'flex', flexDirection:'column'}}>
                             <label htmlFor="countrySelect" style={styles.formGroupLabel}>Country of Residency</label>
                             <Select
@@ -172,20 +173,27 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                                />
                                 
                         </div>
-                        {selectedCountries.length===1 && selectedCountries[0].value !="Select All" && states.length>0 && <div style={styles.formGroup}>
+                        {selectedCountries.length===1 && selectedCountries[0].value !="Select All" && states.length>0 && <div style={{display:'flex', flexDirection:'column'}}>
                             <label htmlFor="stateSelect" style={styles.formGroupLabel}>State of Residency</label>
-                            <select
-                                id="stateSelect"
-                                value={selectedState}
-                                onChange={(e) => setSelectedState(e.target.value)}
-                                required
-                                style={styles.input}
-                            >
-                                <option value="" disabled>-- Select a State --</option>
-                                {states.map((state) => (
-                                    <option key={state} value={state}>{state}</option>
-                                ))}
-                            </select>
+                            
+                            <Select
+                                  isMulti
+                                  options={states.map(country => ({ value: country, label: country }))}
+                                  value={selectedStates}
+                                  onChange={(val)=>{
+                                      console.log("value",val)
+                                      const sAll = val.find((a)=>a.value === 'Select All');
+                                      console.log("sAll",sAll)
+                                      if(sAll){
+                                          setSelectedStates([sAll])
+                                      }else{
+                                          console.log("Setting", val)
+                                          setSelectedStates(val)
+                                      }
+                                  }}
+                                  placeholder="Select state/states"
+                            />
+                             
                         </div>}
 
                         {selectedCountry === 'Other' && (
@@ -201,7 +209,10 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                                 />
                             </div>
                         )}
-
+{errorMessage && <h3 style={{color:'red'}}>
+                            {errorMessage}
+                        </h3>
+                        }
                         <h2 style={styles.sectionTitle}>Select Issues</h2>
                         <div style={styles.checkboxGroup}>
                             {issuesList.map((issue) => (
@@ -235,7 +246,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                     </form>
                 )}
 
-                {!loading && selectedApp && (
+                {!loading && selectedApp && selectedApp!='NA' && (
                     <div>
                         <h2>Selected Application</h2>
                         <p><strong>Legal Name:</strong> {selectedApp.legalName}</p>
@@ -247,6 +258,18 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp }) {
                             <button style={styles.submitButton} onClick={() => onApplyFilter(filters)}>
                                 Select Another
                             </button>
+                            <button style={styles.rejectButton} onClick={onClose}>
+                                Close
+                            </button>
+                     </div>
+                   
+                )}
+
+                    {!loading && selectedApp && selectedApp=='NA' && (
+                    <div>
+                        <h2>No Application Meets the selected Criteria</h2>
+       
+                    
                             <button style={styles.rejectButton} onClick={onClose}>
                                 Close
                             </button>

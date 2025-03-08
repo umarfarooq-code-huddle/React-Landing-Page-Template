@@ -6,6 +6,7 @@ import globalStyles from '../global.module.css';
 function DrawTypeModal({ onClose, onSelect }) {
     const [selectedType, setSelectedType] = useState('');
     const [drawAmount, setDrawAmount] = useState('');
+    
 
     const handleSelect = () => {
         onSelect({drawType : selectedType, drawAmount : drawAmount});

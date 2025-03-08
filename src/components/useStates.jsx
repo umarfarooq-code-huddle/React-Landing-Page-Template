@@ -12,7 +12,7 @@ export function useStates(selectedCountry) {
 
       if (countryCode) {
         const statesList = State.getStatesOfCountry(countryCode);
-        setStates(statesList.map((state) => state.name));
+        setStates(['Select All', ...statesList.map((state) => state.name)]);
       }
     }
   }, [selectedCountry]);
