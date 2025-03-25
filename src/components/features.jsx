@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { db } from "../utils/firebase";
@@ -115,8 +114,8 @@ export const Features = (props) => {
             Once you visit our channel you can return and continue to the next step
             </p>
             <br />
-            <a href="https://rumble.com/c/c-6750781" target="_blank" rel="noopener noreferrer">
-              https://rumble.com/c/c-6750781
+            <a href="https://rumble.com/c/c-7450456" target="_blank" rel="noopener noreferrer">
+            https://rumble.com/c/c-7450456
             </a>
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <button
@@ -146,11 +145,11 @@ export const Features = (props) => {
             Once you visit our channel you can return and continue to the next step
             </p>
             <a
-              href="https://www.youtube.com/@GrantYourWishFoundation"
+              href="https://www.youtube.com/@GrantYourRequestFoundation"
               target="_blank"
               rel="noopener noreferrer"
             >
-              https://www.youtube.com/@GrantYourWishFoundation
+              https://www.youtube.com/@GrantYourRequestFoundation
             </a>
             <br />
             <button
@@ -343,13 +342,17 @@ export const Features = (props) => {
           <div
             style={{
               background: "#fff",
-              padding: "20px",
+              padding: "30px",
               borderRadius: "5px",
-              maxWidth: "800px",
-              maxHeight: "80vh",
-              overflowY: "scroll",
+              maxWidth: isMobile ? "95%" : "1200px",
+              width: "90%",
+              maxHeight: "90vh",
+              overflowY: "auto",
+
+              
               textAlign: "center",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              margin: "30px",
             }}
           >
             {renderModalContent()}

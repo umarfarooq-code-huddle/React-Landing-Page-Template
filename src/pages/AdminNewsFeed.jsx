@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../utils/firebase";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import JsonData from "../data/data.json";
 import { Navigation } from "../components/navigation";
-import { Delete } from "@mui/icons-material";
+import { Delete, PushPin } from "@mui/icons-material";
 import { Modal, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -28,8 +28,12 @@ const AdminNewsFeed = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        // Sort news by date (desc)
-        newsList.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort news by pinned status first, then by date (desc)
+        newsList.sort((a, b) => {
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          return new Date(b.date) - new Date(a.date);
+        });
         setNews(newsList);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -73,6 +77,21 @@ const AdminNewsFeed = () => {
   useEffect(() => {
     setLandingPageData(JsonData);
   }, []);
+
+  const togglePin = async (id, currentPinnedStatus) => {
+    try {
+      await updateDoc(doc(db, "news", id), {
+        pinned: !currentPinnedStatus
+      });
+      setNews(news.map(article => 
+        article.id === id 
+          ? { ...article, pinned: !currentPinnedStatus }
+          : article
+      ));
+    } catch (error) {
+      console.error("Error toggling pin:", error);
+    }
+  };
 
   const styles = {
     container: {
@@ -141,6 +160,28 @@ const AdminNewsFeed = () => {
     deleteButtonHover: {
       backgroundColor: "#ff1a1a",
     },
+    pinButton: {
+      backgroundColor: "#4CAF50",
+      color: "white",
+      border: "none",
+      padding: "10px 20px",
+      borderRadius: "5px",
+      cursor: "pointer",
+      fontFamily: "Rockwell, serif",
+      transition: "background-color 0.3s ease",
+      marginRight: "10px",
+    },
+    pinButtonHover: {
+      backgroundColor: "#45a049",
+    },
+    pinnedBadge: {
+      backgroundColor: "#4CAF50",
+      color: "white",
+      padding: "2px 8px",
+      borderRadius: "12px",
+      fontSize: "0.8rem",
+      marginLeft: "10px",
+    },
   };
 
   return (
@@ -165,24 +206,40 @@ const AdminNewsFeed = () => {
               title={article.link ? `Go to link: ${article.link}` : ""}
             >
               <div style={{display: "flex", justifyContent: "space-between"}}>
-
-              <h2 style={styles.cardTitle}>{article.title}</h2>
-
-          
-              <button
-                style={{
-                  ...styles.deleteButton,
-                  ...(hovered === article.id ? styles.deleteButtonHover : {}),
-                }}
-                onMouseEnter={() => setHovered(article.id)}
-                onMouseLeave={() => setHovered(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteClick(article.id);
-                }}
-              >
-                <Delete />
-              </button>
+                <div style={{display: "flex", alignItems: "center"}}>
+                  <h2 style={styles.cardTitle}>{article.title}</h2>
+                  {article.pinned && <span style={styles.pinnedBadge}>Pinned</span>}
+                </div>
+                <div>
+                  <button
+                    style={{
+                      ...styles.pinButton,
+                      ...(hovered === `pin-${article.id}` ? styles.pinButtonHover : {}),
+                    }}
+                    onMouseEnter={() => setHovered(`pin-${article.id}`)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePin(article.id, article.pinned);
+                    }}
+                  >
+                    <PushPin style={{ transform: article.pinned ? 'rotate(45deg)' : 'none' }} />
+                  </button>
+                  <button
+                    style={{
+                      ...styles.deleteButton,
+                      ...(hovered === article.id ? styles.deleteButtonHover : {}),
+                    }}
+                    onMouseEnter={() => setHovered(article.id)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClick(article.id);
+                    }}
+                  >
+                    <Delete />
+                  </button>
+                </div>
               </div>
               <p style={styles.cardContent}>{article.content}</p>
               <small style={styles.cardDate}>

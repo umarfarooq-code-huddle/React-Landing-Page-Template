@@ -8,6 +8,8 @@ import { db } from '../utils/firebase'; // Make sure to import your Firebase con
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { Navigation } from './navigation';
+import JsonData from '../data/data.json';
 
 const issuesList = [
   'Mortgage / Rent: payments late.',
@@ -133,192 +135,201 @@ function ApplicationForm() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.formContainer}>
-        <form onSubmit={handleSubmit}>
-          <h1 className={styles.title}>Application Questionnaire</h1>
+    <div>
+      <Navigation data={JsonData.App} />
+      <div className={styles.container}>
+        <div className={styles.formContainer}>
+          <form onSubmit={handleSubmit}>
+            <h1 className={styles.title}>Application Questionnaire</h1>
 
 
-          <div className={styles.formGroup}>
-            <label htmlFor="legalName">Legal Name:</label>
-            <input
-              type="text"
-              id="legalName"
-              value={legalName}
-              onChange={(e) => {
-                const input = e.target.value;
-                if (/^[a-zA-Z\s]*$/.test(input)) {
-                  setLegalName(input);
-                }
-              }}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="rumbleUserName">Rumble Username:</label>
-            <input
-              type="text"
-              id="rumbleUserName"
-              value={rumbleUserName}
-              onChange={(e) => setRumbleUsername(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="youtubeUserName">Youtube Username:</label>
-            <input
-              type="text"
-              id="youtubeUserName"
-              value={youtubeUserName}
-              onChange={(e) => setYoutubeUsername(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="gmail">Email:</label>
-            <input
-              type="email"
-              id="gmail"
-              value={gmail}
-              onChange={(e) => setGmail(e.target.value)}
-              required
-            />
-          </div>
-          <p style={{fontStyle:'italic', color:'red'}}>
-
-          To ensure smooth verification, please enter the email address associated with the YouTube account you used to subscribe. This will help match your subscription details accurately.
-          </p>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="phone">Phone Number:</label>
-            <br />
-            <PhoneInput
-              country={'us'}
-              value={phone}
-
-              onChange={(phone) => setPhone(phone)}
-              required
-            />
-          </div>
-
-          <h2 className={styles.sectionTitle}>Country of Residency</h2>
-          <div className={styles.formGroup}>
-            <label htmlFor="countrySelect">Select Country:</label>
-            <select
-              id="countrySelect"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              required
-            >
-              <option value="" disabled>
-                -- Select a Country --
-              </option>
-              {countries.map((country) => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          {selectedCountry === 'Other' && (
             <div className={styles.formGroup}>
-              <label htmlFor="otherCountry">Please specify:</label>
+              <label htmlFor="legalName">Legal Name:</label>
               <input
                 type="text"
-                id="otherCountry"
-                value={otherCountry}
-                maxLength={40}
-                onChange={(e) => setOtherCountry(e.target.value)}
+                id="legalName"
+                value={legalName}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  if (/^[a-zA-Z\s]*$/.test(input)) {
+                    setLegalName(input);
+                  }
+                }}
                 required
               />
             </div>
-          )}
 
-          {states.length > 0 && (
-            <>
-              <h2 className={styles.sectionTitle}>State of Residency</h2>
-              <div className={styles.formGroup}>
-                <label htmlFor="stateSelect">Select State:</label>
-                <select
-                  id="stateSelect"
-                  required
-                  value={selectedState}
-                  onChange={(e) => setSelectedState(e.target.value)}
-                >
-                  <option value="" disabled>
-                    -- Select a State --
-                  </option>
-                  {states.map((state) => (
-                    <option key={state} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
-
-          <h2 className={styles.sectionTitle}>
-            Check all that apply (Information must be verified for eligibility)
-          </h2>
-
-          <div className={styles.checkboxGroup}>
-            {issuesList.map((issue) => (
-              <label key={issue} className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  value={issue}
-                  checked={issues.includes(issue)}
-                  onChange={handleIssueChange}
-                />
-                {issue}
-              </label>
-            ))}
-            <label className={styles.checkboxLabel}>
+            <div className={styles.formGroup}>
+              <label htmlFor="rumbleUserName">Rumble Username:</label>
               <input
-                type="checkbox"
-                value="Other"
-                checked={issues.includes('Other')}
-                onChange={(event) => {
-                  handleIssueChange(event);
-                  if (!event.target.checked) {
-                    setOtherIssue(''); // Clear the "Other" input if unchecked
-                  }
-                }}
+                type="text"
+                id="rumbleUserName"
+                value={rumbleUserName}
+                onChange={(e) => setRumbleUsername(e.target.value)}
+                required
               />
-              Other
-            </label>
-            {issues.includes('Other') && (
+              <p style={{fontStyle:'italic', color:'#666', fontSize: '0.9em'}}>
+                If you don't have a Rumble account, please enter "not subscribed"
+              </p>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="youtubeUserName">Youtube Username:</label>
+              <input
+                type="text"
+                id="youtubeUserName"
+                value={youtubeUserName}
+                onChange={(e) => setYoutubeUsername(e.target.value)}
+                required
+              />
+              <p style={{fontStyle:'italic', color:'#666', fontSize: '0.9em'}}>
+                If you don't have a YouTube account, please enter "not subscribed"
+              </p>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="gmail">Email:</label>
+              <input
+                type="email"
+                id="gmail"
+                value={gmail}
+                onChange={(e) => setGmail(e.target.value)}
+                required
+              />
+            </div>
+            <p style={{fontStyle:'italic', color:'red'}}>
+
+            To ensure smooth verification, please enter the email address associated with the YouTube account you used to subscribe. This will help match your subscription details accurately.
+            </p>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="phone">Phone Number:</label>
+              <br />
+              <PhoneInput
+                country={'us'}
+                value={phone}
+
+                onChange={(phone) => setPhone(phone)}
+                required
+              />
+            </div>
+
+            <h2 className={styles.sectionTitle}>Country of Residency</h2>
+            <div className={styles.formGroup}>
+              <label htmlFor="countrySelect">Select Country:</label>
+              <select
+                id="countrySelect"
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                required
+              >
+                <option value="" disabled>
+                  -- Select a Country --
+                </option>
+                {countries.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            {selectedCountry === 'Other' && (
               <div className={styles.formGroup}>
-                <label htmlFor="otherIssue">Please specify:</label>
+                <label htmlFor="otherCountry">Please specify:</label>
                 <input
                   type="text"
-                  id="otherIssue"
-                  value={otherIssue}
-                  onChange={(e) => setOtherIssue(e.target.value)}
+                  id="otherCountry"
+                  value={otherCountry}
+                  maxLength={40}
+                  onChange={(e) => setOtherCountry(e.target.value)}
                   required
                 />
               </div>
             )}
-          </div>
 
-          {error && <p style={{color:'red'}}>{error}</p>}
+            {states.length > 0 && (
+              <>
+                <h2 className={styles.sectionTitle}>State of Residency</h2>
+                <div className={styles.formGroup}>
+                  <label htmlFor="stateSelect">Select State:</label>
+                  <select
+                    id="stateSelect"
+                    required
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      -- Select a State --
+                    </option>
+                    {states.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+
+            <h2 className={styles.sectionTitle}>
+              Check all that apply <br /> (Information must be verified for eligibility)
+            </h2>
+
+            <div className={styles.checkboxGroup}>
+              {issuesList.map((issue) => (
+                <label key={issue} className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    value={issue}
+                    checked={issues.includes(issue)}
+                    onChange={handleIssueChange}
+                  />
+                  {issue}
+                </label>
+              ))}
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  value="Other"
+                  checked={issues.includes('Other')}
+                  onChange={(event) => {
+                    handleIssueChange(event);
+                    if (!event.target.checked) {
+                      setOtherIssue(''); // Clear the "Other" input if unchecked
+                    }
+                  }}
+                />
+                Other
+              </label>
+              {issues.includes('Other') && (
+                <div className={styles.formGroup}>
+                  <label htmlFor="otherIssue">Please specify:</label>
+                  <input
+                    type="text"
+                    id="otherIssue"
+                    value={otherIssue}
+                    onChange={(e) => setOtherIssue(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
+            </div>
+
+            {error && <p style={{color:'red'}}>{error}</p>}
 
 
-          <button type="submit" className={styles.submitButton}>
-            Submit Application
-          </button>
-        </form>
+            <button type="submit" className={styles.submitButton}>
+              Submit Application
+            </button>
+          </form>
+        </div>
+
+        {showToast && (
+          <Toast message="Application submitted successfully!" onClose={() => setShowToast(false)} />
+        )}
       </div>
-
-      {showToast && (
-        <Toast message="Application submitted successfully!" onClose={() => setShowToast(false)} />
-      )}
     </div>
   );
 }

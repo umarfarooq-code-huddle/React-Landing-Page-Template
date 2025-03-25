@@ -16,8 +16,12 @@ const NewsFeed = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        // Sort news by date (desc)
-        newsList.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort news by pinned status first, then by date (desc)
+        newsList.sort((a, b) => {
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          return new Date(b.date) - new Date(a.date);
+        });
         setNews(newsList);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -101,7 +105,21 @@ const NewsFeed = () => {
               onClick={() => article.link && window.open(article.link, "_blank")}
               title={article.link ? `Go to link: ${article.link}` : ""}
             >
-              <h2 style={styles.cardTitle}>{article.title}</h2>
+              <div style={{display: "flex", alignItems: "center"}}>
+                <h2 style={styles.cardTitle}>{article.title}</h2>
+                {article.pinned && (
+                  <span style={{
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    padding: "2px 8px",
+                    borderRadius: "12px",
+                    fontSize: "0.8rem",
+                    marginLeft: "10px"
+                  }}>
+                    Pinned
+                  </span>
+                )}
+              </div>
               <p style={styles.cardContent}>{article.content}</p>
               <small style={styles.cardDate}>
                 Published on: {new Date(article.date).toLocaleDateString()}

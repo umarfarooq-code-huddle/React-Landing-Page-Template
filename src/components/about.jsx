@@ -80,14 +80,23 @@ export const About = (props) => {
         <div
           style={{
             display: "flex",
-            flexWrap: "wrap",
+            flexDirection: isMobile ? "column" : "row",
             marginTop: "4vh",
             width: "100%",
-            justifyContent: "space-between",
+            maxWidth: "1100px",
+            justifyContent: "center",
+            gap: "5%",
+            margin: "4vh auto 0",
           }}
         >
           {/* First Column */}
-          <ul style={{ width: "45%", listStyle: "none", paddingLeft: 0 }}>
+          <ul style={{ 
+            width: isMobile ? "100%" : "55%", 
+            listStyle: "none", 
+            paddingLeft: 0,
+            display: "inline-block",
+            margin: "0 auto"
+          }}>
             {props.data
               ? props.data.Why.map((d, i) => (
                   <li
@@ -97,8 +106,9 @@ export const About = (props) => {
                       fontFamily: "Rockwell, serif",
                       color: "#333",
                       display: "flex",
-                      alignItems: "center",
+                      alignItems: "flex-start",
                       marginBottom: "8px",
+                      textAlign: "left",
                     }}
                   >
                     <span
@@ -106,18 +116,25 @@ export const About = (props) => {
                         color: "green",
                         fontSize: "20px",
                         marginRight: "8px",
+                        minWidth: "20px",
                       }}
                     >
                       ✔
                     </span>
-                    {d}
+                    <span style={{ flex: 1 }}>{d}</span>
                   </li>
                 ))
               : "loading..."}
           </ul>
 
           {/* Second Column */}
-          <ul style={{ width: "45%", listStyle: "none", paddingLeft: 0 }}>
+          <ul style={{ 
+            width: isMobile ? "100%" : "55%", 
+            listStyle: "none", 
+            paddingLeft: 0,
+            display: "inline-block",
+            margin: "0 auto"
+          }}>
             {props.data
               ? props.data.Why2.map((d, i) => (
                   <li
@@ -127,8 +144,9 @@ export const About = (props) => {
                       fontFamily: "Rockwell, serif",
                       color: "#333",
                       display: "flex",
-                      alignItems: "center",
+                      alignItems: "flex-start",
                       marginBottom: "8px",
+                      textAlign: "left",
                     }}
                   >
                     <span
@@ -136,11 +154,12 @@ export const About = (props) => {
                         color: "green",
                         fontSize: "20px",
                         marginRight: "8px",
+                        minWidth: "20px",
                       }}
                     >
                       ✔
                     </span>
-                    {d}
+                    <span style={{ flex: 1 }}>{d}</span>
                   </li>
                 ))
               : "loading..."}
