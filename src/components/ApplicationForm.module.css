@@ -78,8 +78,12 @@ select:focus {
   transform: scale(1.2);
 }
 
-
-
+.disabledButton {
+  background-color: #ccc; /* Light gray background */
+  color: #666; /* Darker gray text */
+  cursor: not-allowed; /* Show not-allowed cursor */
+  opacity: 0.6; /* Slightly transparent */
+}
 
 .submitButton:hover {
   background: linear-gradient(to right, #5b86e5, #36d1dc);
