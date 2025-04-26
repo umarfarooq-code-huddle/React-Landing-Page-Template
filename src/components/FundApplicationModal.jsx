@@ -170,7 +170,7 @@ function FundApplicationModal({ onClose, onSubmit, application }) {
                         </div>
                         <input
                             type="text"
-                            placeholder="Enter Transaction ID"
+                            placeholder="Enter Funding Transaction ID"
                             value={transactionId}
                             onChange={(e) => setTransactionId(e.target.value)}
                             className={styles.input}
