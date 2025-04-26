@@ -442,7 +442,7 @@ function ViewApplications() {
                                     <th>Country of Residency</th>
                                     <th>State of Residency</th>
                                     <th>Rumble Username</th>
-                                    <th>Youtube Username</th>
+                                    <th>Youtube<br/>Username</th>
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Issues</th>
