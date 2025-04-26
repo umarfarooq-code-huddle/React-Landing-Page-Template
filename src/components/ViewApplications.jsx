@@ -51,11 +51,11 @@ function ViewApplications() {
                     const submissionDate = data.submittedAt ? new Date(data.submittedAt) : new Date();
                     const expiryDate = new Date(submissionDate);
                     expiryDate.setDate(expiryDate.getDate() + 365);
-                    const daysRemaining = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                    const applicationExpiry = expiryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
                     return {
                         id: doc.id, // Include document ID
                         srNo: index + 1, // Add serial number
-                        daysRemaining, // Add days remaining
+                        applicationExpiry, // Add days remaining
                         drawTypes: data.drawTypes || [], // Initialize drawTypes array
                         ...data,
                     };
@@ -396,10 +396,11 @@ function ViewApplications() {
                         <table className={styles.table}>
                             <thead>
                                 <tr>
-                                    <th>Sr No</th>
+                                    <th>Application No</th>
+                                    <th>Expiry Date</th>
                                     <th>Legal Name</th>
-                                    <th>State of Residency</th>
                                     <th>Country of Residency</th>
+                                    <th>State of Residency</th>
                                     <th>Rumble Username</th>
                                     <th>Youtube Username</th>
                                     <th>Email</th>
@@ -411,7 +412,7 @@ function ViewApplications() {
                                             Amount
                                         </th>
                                     )}
-                                    <th>Expires In</th>
+                                 
                                     {activeTab === 'selected' && (
                                                 <th>
                                                   Actions
@@ -434,9 +435,20 @@ function ViewApplications() {
         ).map((app) => (
             <tr key={`${app.id}-${app.drawTypes[0]?.drawType || 'no-draw'}`}>
                 <td>{app.srNo}</td>
+                <td>{app.applicationExpiry}</td>
+                {activeTab === 'selected' && (
+                    <td>
+                        <button
+                            className={globalStyles.selectButton}
+                            onClick={() => handleFundApplication(app)}
+                        >
+                            Fund
+                        </button>
+                    </td>
+                )}
                 <td>{app.legalName}</td>
-                <td>{app.selectedState || 'N/A'}</td>
                 <td>{app.selectedCountry || 'N/A'}</td>
+                <td>{app.selectedState || 'N/A'}</td>
                 <td>{app.rumbleUserName || 'N/A'}</td>
                 <td>{app.youtubeUserName || 'N/A'}</td>
                 <td>{app.gmail || 'N/A'}</td>
@@ -486,17 +498,7 @@ function ViewApplications() {
                     </span>
                 ))}
             </td>}
-                <td>{app.daysRemaining} days</td>
-                {activeTab === 'selected' && (
-                    <td>
-                        <button
-                            className={globalStyles.selectButton}
-                            onClick={() => handleFundApplication(app)}
-                        >
-                            Fund
-                        </button>
-                    </td>
-                )}
+               
             </tr>
         ))
     ) : (

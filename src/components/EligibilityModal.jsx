@@ -150,7 +150,7 @@ function EligibilityModal({ onClose, onApplyFilter, loading, selectedApp,errorMe
 
                 {(!loading && (!selectedApp ))&& (
                     <form onSubmit={handleSubmit}>
-                        <h1 style={styles.title}>Eligibility Criteria</h1>
+                        <h1 style={styles.title}>Selection Criteria</h1>
                         
                         <div style={{display:'flex', flexDirection:'column'}}>
                             <label htmlFor="countrySelect" style={styles.formGroupLabel}>Country of Residency</label>
