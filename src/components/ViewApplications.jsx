@@ -297,52 +297,92 @@ function ViewApplications() {
         <div className={styles.container} style={{marginTop: "4.5vh"}}>
             <h1 className={styles.title}>Applications List</h1>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '18px', position: 'relative' }}>
-    {['all', 'selected', 'funded'].map((tab) => (
-        <button
-            key={tab}
-            style={{
-                position: 'relative',
-                padding: '9px 18px',
-                margin: '0 9px',
-                backgroundColor: activeTab === tab ? '#007bff' : '#f8f9fa',
-                color: activeTab === tab ? '#fff' : '#000',
-                border: '1px solid #007bff',
-                borderRadius: '5px',
-                cursor: 'pointer'
-            }}
-            onClick={() => handleTabChange(tab)}
-        >
-            {tab === 'all' && 'All Applications'}
-            {tab === 'selected' && 'Selected Applications'}
-            {tab === 'funded' && 'Funded Applications'}
-
-            {/* Circle Count Indicator */}
-            <span
-                style={{
-                    position: 'absolute',
-                    top: '-5px',
-                    right: '-10px',
-                    backgroundColor: activeTab === tab ? '#fff' : '#007bff',
-                    color: activeTab === tab ? '#007bff' : '#fff',
-                    borderRadius: '50%',
-                    width: '22px',
-                    height: '22px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    border: `1px solid ${activeTab === tab ? '#007bff' : '#fff'}`,
-                }}
-            >
-                {tab === 'all' ? applications.length : 
-                 tab === 'selected' ? applications.filter(app => app.drawTypes.length>0).length : 
-                 applications.filter(app => app.funded).length}
-            </span>
-        </button>
-    ))}
-</div>
+            {/* Aligned Count Boxes and Tabs */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+                {/* Count Boxes Row */}
+                <div style={{ display: 'flex', width: '540px', gap: '24px', justifyContent: 'center', marginBottom: '20px' }}>
+                    <div style={{
+                        backgroundColor: '#f8f9fa',
+                        padding: '6px 0',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        textAlign: 'center',
+                        width: '180px',
+                        border: '1px solid #007bff',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#007bff', lineHeight: 1 }}>{applications.length}</div>
+                        <div style={{ color: '#6c757d', fontSize: '13px' }}>Total Applications</div>
+                    </div>
+                    <div style={{
+                        backgroundColor: '#f8f9fa',
+                        padding: '6px 0',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        textAlign: 'center',
+                        width: '180px',
+                        border: '1px solid #007bff',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#28a745', lineHeight: 1 }}>{filteredApps.flatMap(app =>
+                app.drawTypes.map(type => ({
+                    ...app,
+                    drawTypes: [type], // Flatten `drawTypes` for each entry,
+                    drawAmount : type.drawType,
+                    drawType : type.drawType
+                }))
+              ).length }</div>
+                        <div style={{ color: '#6c757d', fontSize: '13px' }}>Selected Applications</div>
+                    </div>
+                    <div style={{
+                        backgroundColor: '#f8f9fa',
+                        padding: '6px 0',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        textAlign: 'center',
+                        width: '180px',
+                        border: '1px solid #007bff',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#dc3545', lineHeight: 1 }}>{applications.filter(app => app.funded).length}</div>
+                        <div style={{ color: '#6c757d', fontSize: '13px' }}>Funded Applications</div>
+                    </div>
+                </div>
+                {/* Tab Buttons Row */}
+                <div style={{ display: 'flex', width: '540px', gap: '24px', justifyContent: 'center' }}>
+                    {['all', 'selected', 'funded'].map((tab) => (
+                        <button
+                            key={tab}
+                            style={{
+                                width: '180px',
+                                padding: '6px 0',
+                                backgroundColor: activeTab === tab ? '#007bff' : '#f8f9fa',
+                                color: activeTab === tab ? '#fff' : '#000',
+                                border: '1px solid #007bff',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontSize: '15px',
+                                fontWeight: 500,
+                                transition: 'background 0.2s, color 0.2s',
+                            }}
+                            onClick={() => handleTabChange(tab)}
+                        >
+                            {tab === 'all' && 'All Applications'}
+                            {tab === 'selected' && 'Selected Applications'}
+                            {tab === 'funded' && 'Funded Applications'}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
 
             <div className={styles.filters}>
@@ -436,16 +476,7 @@ function ViewApplications() {
             <tr key={`${app.id}-${app.drawTypes[0]?.drawType || 'no-draw'}`}>
                 <td>{app.srNo}</td>
                 <td>{app.applicationExpiry}</td>
-                {activeTab === 'selected' && (
-                    <td>
-                        <button
-                            className={globalStyles.selectButton}
-                            onClick={() => handleFundApplication(app)}
-                        >
-                            Fund
-                        </button>
-                    </td>
-                )}
+                
                 <td>{app.legalName}</td>
                 <td>{app.selectedCountry || 'N/A'}</td>
                 <td>{app.selectedState || 'N/A'}</td>
@@ -498,6 +529,17 @@ function ViewApplications() {
                     </span>
                 ))}
             </td>}
+
+            {activeTab === 'selected' && (
+                    <td>
+                        <button
+                            className={globalStyles.selectButton}
+                            onClick={() => handleFundApplication(app)}
+                        >
+                            Fund
+                        </button>
+                    </td>
+                )}
                
             </tr>
         ))
