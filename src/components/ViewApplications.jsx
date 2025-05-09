@@ -76,7 +76,8 @@ function ViewApplications() {
                         drawTypes: data.drawTypes || [], // Initialize drawTypes array
                         ...data,
                     };
-                });
+                }).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)); // Sort in descending order
+
                 console.log({ applicationsData })
                 setApplications(applicationsData);
                 setFilteredApps(applicationsData);
@@ -462,7 +463,7 @@ function ViewApplications() {
                 <table className={styles.table}>
                     <thead>
                         <tr>
-                            <th>Application No</th>
+                            <th>Application ID</th>
                             <th>
                                 {
                                     activeTab === "all" ? "Expiry Date" : activeTab === "selected" ? "Date Selected" : "Funded Date"
@@ -505,7 +506,7 @@ function ViewApplications() {
                                 : filteredApps
                             ).map((app) => (
                                 <tr key={`${app.id}-${app.drawTypes[0]?.drawType || 'no-draw'}`}>
-                                    <td>{app.srNo}</td>
+                                    <td>{app.applicationId || 'N/A'}</td>
                                     <td>
                                         {
                                             activeTab === "all" ? app.applicationExpiry : activeTab === "selected" ? (app.dateSelected) : (app.dateFunded)

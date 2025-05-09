@@ -59,30 +59,30 @@ function ApplicationForm() {
       return;
     }
   
-    // Generate application ID
-    const timestamp = new Date().getTime();
-    const randomNum = Math.floor(Math.random() * 1000);
-    const applicationId = `APP-${timestamp}-${randomNum}`;
-  
-    const formData = {
-      legalName,
-      selectedCountry: selectedCountry === 'Other' && otherCountry ? otherCountry : selectedCountry,
-      issues: finalIssues,
-      rumbleUserName,
-      selectedState: selectedState,
-      youtubeUserName,
-      gmail,
-      phone,
-      submittedAt: new Date().toISOString(),
-      applicationId, // Add the application ID
-    };
-  
     try {
+      // Get total count of applications
+      const applicationsRef = collection(db, 'applications');
+      const applicationsSnapshot = await getDocs(applicationsRef);
+      const applicationCount = applicationsSnapshot.size + 1; // Add 1 for the new application
+      const applicationId = applicationCount.toString();
+  
+      const formData = {
+        legalName,
+        selectedCountry: selectedCountry === 'Other' && otherCountry ? otherCountry : selectedCountry,
+        issues: finalIssues,
+        rumbleUserName,
+        selectedState: selectedState,
+        youtubeUserName,
+        gmail,
+        phone,
+        submittedAt: new Date().toISOString(),
+        applicationId, // Add the application ID
+      };
+  
       // Query Firestore to check if an application with the same phone or email exists within the last year
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
   
-      const applicationsRef = collection(db, 'applications');
       const phoneQuery = query(applicationsRef, where('phone', '==', phone));
       const emailQuery = query(applicationsRef, where('gmail', '==', gmail));
   
