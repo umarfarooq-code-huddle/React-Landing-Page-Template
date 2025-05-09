@@ -21,7 +21,7 @@
     max-width: 450px; /* Reduced max-width */
     width: 100%;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 2100; /* Ensure the modal content is on top of overlay */
+    z-index: 9999; /* Ensure the modal content is on top of overlay */
     margin: 20px; /* Add margin to avoid touching the edges */
 }
 

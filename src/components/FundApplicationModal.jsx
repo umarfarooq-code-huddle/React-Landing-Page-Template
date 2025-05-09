@@ -50,12 +50,30 @@ function FundApplicationModal({ onClose, onSubmit, application }) {
         onSubmit(selectedFields, transactionId);
     };
 
+    // Map of display names to application keys for the receipt
+    const receiptFields = [
+        { label: 'Application Serial #', key: 'srNo' },
+        { label: 'Funding Transaction ID', key: 'transactionId' },
+        { label: 'Date', key: 'submittedAt' },
+        { label: 'Legal Name', key: 'legalName' },
+        { label: 'Country', key: 'selectedCountry' },
+        { label: 'State', key: 'selectedState' },
+        { label: 'Rumble Username', key: 'rumbleUserName' },
+        { label: 'YouTube Username', key: 'youtubeUserName' },
+        { label: 'email', key: 'gmail' },
+        { label: 'Phone', key: 'phone' },
+        { label: 'Issues', key: 'issues' },
+        { label: 'Draw Tag', key: 'drawType' },
+        { label: 'Amount of Grant', key: 'drawAmount' },
+        { label: 'Application Expiration Date', key: 'applicationExpiry' },
+    ];
+
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modal}>
                 {step === 1 && (
                     <form onSubmit={handleNextStep}>
-                        <h2 className={styles.title}>Verify Checklist</h2>
+                        <h2 className={styles.title}>Eligibility Requirements Checklist</h2>
                         <div className={styles.checkboxGroup}>
                             <label className={styles.checkboxLabel}>
                                 <input
@@ -156,15 +174,15 @@ function FundApplicationModal({ onClose, onSubmit, application }) {
                     <form onSubmit={handleSubmit}>
                         <h1 className={styles.title}>Select Fields for Receipt</h1>
                         <div className={styles.checkboxGroup}>
-                            {Object.keys(application).map((field) => (
-                                <label key={field} className={styles.checkboxLabel}>
+                            {receiptFields.map(({ label, key }) => (
+                                <label key={key} className={styles.checkboxLabel}>
                                     <input
                                         type="checkbox"
-                                        value={field}
-                                        checked={selectedFields.includes(field)}
+                                        value={key}
+                                        checked={selectedFields.includes(key)}
                                         onChange={handleFieldChange}
                                     />
-                                    {field}
+                                    {label}
                                 </label>
                             ))}
                         </div>

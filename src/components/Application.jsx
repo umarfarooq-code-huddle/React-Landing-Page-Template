@@ -59,6 +59,11 @@ function ApplicationForm() {
       return;
     }
   
+    // Generate application ID
+    const timestamp = new Date().getTime();
+    const randomNum = Math.floor(Math.random() * 1000);
+    const applicationId = `APP-${timestamp}-${randomNum}`;
+  
     const formData = {
       legalName,
       selectedCountry: selectedCountry === 'Other' && otherCountry ? otherCountry : selectedCountry,
@@ -69,6 +74,7 @@ function ApplicationForm() {
       gmail,
       phone,
       submittedAt: new Date().toISOString(),
+      applicationId, // Add the application ID
     };
   
     try {
@@ -104,12 +110,9 @@ function ApplicationForm() {
       console.log('Document written with ID: ', docRef.id);
   
       setShowToast(true);
+      setError(''); // Clear any previous errors
   
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
-  
-      // Clear the form after successful selection
+      // Clear the form after successful submission
       setLegalName('');
       setRumbleUsername('');
       setSelectedCountry('');
@@ -119,6 +122,12 @@ function ApplicationForm() {
       setPhone('');
       setOtherIssue('');
       setSelectedState('');
+      setYoutubeUsername('');
+  
+      // Navigate after a short delay to allow the user to see the success message
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
     } catch (error) {
       console.error('Error adding document: ', error);
     }
@@ -327,7 +336,13 @@ function ApplicationForm() {
         </div>
 
         {showToast && (
-          <Toast message="Application submitted successfully!" onClose={() => setShowToast(false)} />
+          <Toast 
+            message="Application submitted successfully! Redirecting to home page..." 
+            onClose={() => {
+              setShowToast(false);
+              navigate('/');
+            }} 
+          />
         )}
       </div>
     </div>

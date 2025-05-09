@@ -136,7 +136,7 @@ select:focus {
   max-width: 800px;
   width: 100%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1100; /* Ensure the modal content is on top of overlay */
+  z-index: 9999; /* Ensure the modal content is on top of overlay */
 }
 
 /* Loader (optional for showing the loading state) */

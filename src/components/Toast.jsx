@@ -8,8 +8,11 @@ function Toast({ message, onClose }) {
   }, [onClose]);
 
   return (
-    <div className={styles.toast} onClick={onClose}>
-      {message}
+    <div className={styles.toast}>
+      <div className={styles.message}>{message}</div>
+      <button className={styles.closeButton} onClick={onClose}>
+        ×
+      </button>
     </div>
   );
 }

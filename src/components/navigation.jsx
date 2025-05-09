@@ -8,7 +8,7 @@ export const Navigation = (props) => {
 
 
   return (
-    <nav id="menu" className="navbar navbar-default navbar-fixed-top" style={{backgroundColor:'#000', color:'white'}}>
+    <nav id="menu" className="navbar navbar-default navbar-fixed-top" style={{backgroundColor:'#000', color:'white', zIndex: 100}}>
       <div className="container">
         <div className="navbar-header">
           <button
@@ -46,7 +46,7 @@ export const Navigation = (props) => {
                   </a>
                 </li>
                 <li>
-                  <a href="/#features" className="page-scroll"
+                  <a href="/#process" className="page-scroll"
                   style={{color:'white', fontFamily:'Rockwell, sarif'}}>
                   Our Process
                   </a>

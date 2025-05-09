@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
   if (loading) return <div>Loading...</div>;
 
   // Check if user is authenticated and email matches
-  if (user && user.email === "grantyourwishfoundation@gmail.com") {
+  if (user && user.email === "grantyourrequestfoundation@gmail.com") {
     return children;
   }
 
