@@ -11,7 +11,7 @@ import 'react-phone-input-2/lib/style.css';
 import { Navigation } from './navigation';
 import JsonData from '../data/data.json';
 
-const issuesList = [
+export const issuesList = [
   'Mortgage / Rent: payments late.',
   'Utilities: delinquent on payments',
   'Vehicle loan: delinquent on payments',

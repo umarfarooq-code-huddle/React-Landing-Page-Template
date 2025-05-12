@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../utils/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { Navigation } from "../components/navigation";
+import JsonData from "../data/data.json";
 
 const AdminAddNews = () => {
   const [title, setTitle] = useState("");
@@ -28,9 +30,15 @@ const AdminAddNews = () => {
     }
   };
 
+  const [landingPageData, setLandingPageData] = useState({});
+  useEffect(() => {
+    setLandingPageData(JsonData);
+  }, []);
+
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Add News</h1>
+            <Navigation data={landingPageData.App} />
+      <h1 style={{marginTop: '10vh'}}>Add News</h1>
       <form onSubmit={handleAddNews} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <input
           type="text"

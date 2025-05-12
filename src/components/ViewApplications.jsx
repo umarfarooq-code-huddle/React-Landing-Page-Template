@@ -15,6 +15,7 @@ import FundApplicationModal from './FundApplicationModal'; // Import new modal
 import { jsPDF } from 'jspdf'; // Import jsPDF for generating PDF
 
 import { Navigation } from './navigation';
+import { issuesList } from './Application'; // Import the issuesList
 
 // Map of display names to application keys for the receipt
 const receiptFieldsMap = {
@@ -45,7 +46,8 @@ function ViewApplications() {
     const [selectedCountryFilter, setSelectedCountryFilter] = useState('');
     const [selectedStateFilter, setSelectedStateFilter] = useState('');
     const [drawType, setDrawType] = useState('');
-
+    const [selectedIssueFilter, setSelectedIssueFilter] = useState(''); // New state for issue filter
+    const [legalNameFilter, setLegalNameFilter] = useState(''); // New state for legal name filter
 
     const [drawAmount, setDrawAmount] = useState('');
     const [activeTab, setActiveTab] = useState('all'); // New state for active tab
@@ -104,25 +106,61 @@ function ViewApplications() {
         fetchApplications();
     }, []);
 
+    // useEffect to filter applications when filters change
+    useEffect(() => {
+        let tempFilteredApps = applications;
+
+        // Filter by Legal Name
+        if (legalNameFilter) {
+            tempFilteredApps = tempFilteredApps.filter((app) =>
+                app.legalName?.toLowerCase().includes(legalNameFilter.toLowerCase())
+            );
+        }
+
+        // Filter by Country
+        if (selectedCountryFilter) {
+            tempFilteredApps = tempFilteredApps.filter(
+                (app) => app.selectedCountry === selectedCountryFilter
+            );
+        }
+
+        // Filter by State
+        if (selectedStateFilter) {
+            tempFilteredApps = tempFilteredApps.filter(
+                (app) => app.selectedState === selectedStateFilter
+            );
+        }
+
+        // Filter by Issue
+        if (selectedIssueFilter) {
+            if (selectedIssueFilter === 'Other') {
+                tempFilteredApps = tempFilteredApps.filter((app) =>
+                    app.issues.some(issue => !issuesList.includes(issue))
+                );
+            } else {
+                tempFilteredApps = tempFilteredApps.filter((app) =>
+                    app.issues.includes(selectedIssueFilter)
+                );
+            }
+        }
+
+        setFilteredApps(tempFilteredApps);
+    }, [applications, legalNameFilter, selectedCountryFilter, selectedStateFilter, selectedIssueFilter]); // Dependencies
+
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
 
-        if (name === 'selectedCountry') {
+        if (name === 'legalName') {
+            setLegalNameFilter(value);
+        } else if (name === 'selectedCountry') {
             setSelectedCountryFilter(value);
+            setSelectedStateFilter(''); // Reset state filter when country changes
         } else if (name === 'selectedState') {
             setSelectedStateFilter(value);
+        } else if (name === 'selectedIssue') {
+            setSelectedIssueFilter(value);
         }
-
-        setFilteredApps(
-            applications.filter((app) => {
-                if (name === 'issues') {
-                    return app.issues.some((issue) =>
-                        issue.toLowerCase().includes(value.toLowerCase())
-                    );
-                }
-                return app[name]?.toLowerCase().includes(value.toLowerCase());
-            })
-        );
+        // The filtering logic is now handled by the useEffect hook
     };
 
     const handleRandomSelect = async (eligibilityFilters) => {
@@ -499,7 +537,8 @@ function ViewApplications() {
                         type="text"
                         name="legalName"
                         placeholder="Filter by Legal Name"
-                        onChange={handleFilterChange}
+                        value={legalNameFilter} // Bind value to state
+                        onChange={handleFilterChange} // Keep this for name filter
                         className={styles.filterInput}
                     />
 
@@ -534,13 +573,21 @@ function ViewApplications() {
                         ))}
                     </select>
 
-                    <input
-                        type="text"
-                        name="issues"
-                        placeholder="Filter by Issues"
+                    {/* Issues Filter Dropdown */}
+                    <select
+                        name="selectedIssue" // Changed name
+                        value={selectedIssueFilter}
                         onChange={handleFilterChange}
                         className={styles.filterInput}
-                    />
+                    >
+                        <option value="">-- Filter by Issue --</option>
+                        {issuesList.map((issue) => (
+                            <option key={issue} value={issue}>
+                                {issue}
+                            </option>
+                        ))}
+                        <option value="Other">Other (Custom)</option> {/* Add Other option */}
+                    </select>
                 </div>
                 <table className={styles.table}>
                     <thead>
