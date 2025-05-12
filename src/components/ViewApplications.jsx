@@ -285,19 +285,12 @@ function ViewApplications() {
         docum.setTextColor(0, 0, 0);
         docum.text("Funding Receipt", pageWidth / 2, titleY, { align: "center" });
 
-        // 4. Transaction ID (Below title)
-        const transactionIdY = titleY + 10; // Space below title
-        docum.setFont("helvetica", "normal");
-        docum.setFontSize(12);
-        docum.setTextColor(50, 50, 50);
-        docum.text(`Transaction ID: ${transactionId}`, margin, transactionIdY);
-
-        // 5. Draw Separator Line
-        const lineY = transactionIdY + 8;
+        // 4. Draw Separator Line (Adjusted position)
+        const lineY = titleY + 8; // Position relative to title
         docum.setDrawColor(200, 200, 200); // Light gray line
         docum.line(margin, lineY, pageWidth - margin, lineY);
 
-        // 6. Dynamic Fields (Table-like structure)
+        // 5. Dynamic Fields (Table-like structure) - Renumbered
         let currentY = lineY + 15; // Start position for fields
         const labelX = margin;
         const valueX = margin + 50; // Indent value slightly
@@ -335,17 +328,41 @@ function ViewApplications() {
                 // Increment Y position, considering multi-line values
                 currentY += (splitValue.length * 7) + 3; // Adjust line height (7) and spacing (3)
 
+                // ADDED: Insert Transaction ID after Application Serial # ('srNo')
+                if (field === 'srNo') {
+                    const txIdLabel = "Funding Transaction ID:";
+                    const txIdValue = transactionId; // From function scope
+
+                    // Set label style
+                    docum.setFont("helvetica", "bold");
+                    docum.setTextColor(30, 30, 30);
+                    docum.text(txIdLabel, labelX, currentY);
+
+                    // Set value style
+                    docum.setFont("helvetica", "normal");
+                    docum.setTextColor(50, 50, 50);
+
+                    const splitTxIdValue = docum.splitTextToSize(String(txIdValue || 'N/A'), pageWidth - valueX - margin);
+                    docum.text(splitTxIdValue, valueX, currentY);
+
+                    // Increment Y position for Transaction ID line
+                    currentY += (splitTxIdValue.length * 7) + 3;
+                }
+
                 // Add page break if content overflows
                 if (currentY > pageHeight - margin - 20) { // Check against bottom margin + footer space
                     docum.addPage();
                     currentY = margin; // Reset Y to top margin on new page
                     // Optionally re-add header/logo on new pages if needed
+                     if (logo) { // Re-add logo on new page
+                        docum.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight);
+                     }
                 }
             }
         });
 
 
-        // 7. Footer (Centered at the bottom)
+        // 6. Footer (Centered at the bottom) - Renumbered
         const footerY = pageHeight - margin;
         docum.setFontSize(10);
         docum.setTextColor(100, 100, 100);
