@@ -19,7 +19,7 @@ import { Navigation } from './navigation';
 // Map of display names to application keys for the receipt
 const receiptFieldsMap = {
     srNo: 'Application Serial #',
-    transactionId: 'Funding Transaction ID',
+    id: 'Funding Transaction ID',
     submittedAt: 'Date',
     legalName: 'Legal Name',
     selectedCountry: 'Country',
@@ -31,7 +31,7 @@ const receiptFieldsMap = {
     issues: 'Issues',
     drawType: 'Draw Tag',
     drawAmount: 'Amount of Grant',
-    applicationExpiry: 'Application Expiration Date',
+    applicationExpiry: 'Application Expiry Date',
 };
 
 function ViewApplications() {
@@ -242,6 +242,8 @@ function ViewApplications() {
     };
 
     const handleFundApplication = (app) => {
+
+        console.log({addingToFunded: app})
         setSelectedApp(app);
         setShowFundModal(true);
     };
@@ -256,57 +258,120 @@ function ViewApplications() {
         // Update Firestore
         await updateDoc(doc(db, "applications", selectedApp.id), { funded: true, transactionId, dateFunded: now });
 
-        // Generate PDF receipt
-        const docum = new jsPDF();
+        console.log({fundedApp})
 
-        // Add Background Image
+        // --- Improved PDF Generation ---
+        const docum = new jsPDF();
         const pageWidth = docum.internal.pageSize.getWidth();
         const pageHeight = docum.internal.pageSize.getHeight();
-        docum.addImage(bg, "PNG", 0, 0, pageWidth, pageHeight); // Full-page background
+        const margin = 20; // Page margin
 
-        // Add Logo
+        // 1. Add Background Image (Optional, keep if desired)
+        docum.addImage(bg, "PNG", 0, 0, pageWidth, pageHeight);
+
+        // 2. Add Logo (Centered)
+        const logoWidth = 50; // Adjust as needed
+        const logoHeight = 50; // Adjust as needed
+        const logoX = (pageWidth - logoWidth) / 2;
+        const logoY = margin; // Place logo at the top margin
         if (logo) {
-            docum.addImage(logo, "PNG", 10, 10, 40, 40); // Adjusted for better aesthetics
+            docum.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight);
         }
 
-        // Title Styling (Increase Visibility)
+        // 3. Title (Centered below logo)
+        const titleY = logoY + logoHeight + 15; // Space below logo
         docum.setFont("helvetica", "bold");
-        docum.setFontSize(26);
-        docum.setTextColor(0, 0, 0); // Black text for better visibility
-        docum.text("Funding Receipt", pageWidth / 2, 50, { align: "center" });
+        docum.setFontSize(22); // Slightly smaller title
+        docum.setTextColor(0, 0, 0);
+        docum.text("Funding Receipt", pageWidth / 2, titleY, { align: "center" });
 
-        // Transaction Details (Darker Colors for Visibility)
+        // 4. Transaction ID (Below title)
+        const transactionIdY = titleY + 10; // Space below title
         docum.setFont("helvetica", "normal");
-        docum.setFontSize(14);
-        docum.setTextColor(50, 50, 50); // Darker gray for improved contrast
-        docum.text(`Transaction ID: ${transactionId}`, 20, 80);
+        docum.setFontSize(12);
+        docum.setTextColor(50, 50, 50);
+        docum.text(`Transaction ID: ${transactionId}`, margin, transactionIdY);
 
-        // Dynamic Fields with Better Visibility
-        let yPosition = 100;
+        // 5. Draw Separator Line
+        const lineY = transactionIdY + 8;
+        docum.setDrawColor(200, 200, 200); // Light gray line
+        docum.line(margin, lineY, pageWidth - margin, lineY);
+
+        // 6. Dynamic Fields (Table-like structure)
+        let currentY = lineY + 15; // Start position for fields
+        const labelX = margin;
+        const valueX = margin + 50; // Indent value slightly
+
+        docum.setFontSize(11);
+
         Object.keys(receiptFieldsMap).forEach((field) => {
             if (selectedFields.includes(field)) {
-                docum.setTextColor(30, 30, 30); // Ensures text is readable
                 const label = receiptFieldsMap[field] || field;
                 let value = selectedApp[field];
+
                 if (Array.isArray(value)) {
-                    value = value.join(', ');
+                    value = value.join(', '); // Join array values
+                } else if (value instanceof Date) {
+                    value = value.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); // Format dates nicely
+                } else if (typeof value === 'boolean') {
+                    value = value ? 'Yes' : 'No'; // Display booleans nicely
                 }
-                docum.text(`${label}: ${value}`, 20, yPosition);
-                yPosition += 10;
+                
+                value = String(value || 'N/A'); // Ensure value is a string
+
+                // Set label style
+                docum.setFont("helvetica", "bold");
+                docum.setTextColor(30, 30, 30);
+                docum.text(`${label}:`, labelX, currentY);
+
+                // Set value style
+                docum.setFont("helvetica", "normal");
+                docum.setTextColor(50, 50, 50);
+
+                // Handle potential multi-line values
+                const splitValue = docum.splitTextToSize(value, pageWidth - valueX - margin);
+                docum.text(splitValue, valueX, currentY);
+
+                // Increment Y position, considering multi-line values
+                currentY += (splitValue.length * 7) + 3; // Adjust line height (7) and spacing (3)
+
+                // Add page break if content overflows
+                if (currentY > pageHeight - margin - 20) { // Check against bottom margin + footer space
+                    docum.addPage();
+                    currentY = margin; // Reset Y to top margin on new page
+                    // Optionally re-add header/logo on new pages if needed
+                }
             }
         });
 
-        // Footer
-        docum.setFontSize(12);
-        docum.setTextColor(80, 80, 80); // Slightly darker gray for clarity
-        docum.text("Thank you for your support!", pageWidth / 2, pageHeight - 20, { align: "center" });
+
+        // 7. Footer (Centered at the bottom)
+        const footerY = pageHeight - margin;
+        docum.setFontSize(10);
+        docum.setTextColor(100, 100, 100);
+        docum.text("Thank you for your support!", pageWidth / 2, footerY, { align: "center" });
 
         // Save PDF
         docum.save(`receipt_${transactionId}.pdf`);
 
+        // --- End of Improved PDF Generation ---
+
+
         // Move application to funded
         setFundedApps([...fundedApps, fundedApp]);
-        setFilteredApps(filteredApps.filter((app) => app.id !== selectedApp.id));
+        // Update filteredApps based on the active tab state to avoid removing from 'selected' list incorrectly
+        if (activeTab === 'selected') {
+            // If viewing selected, remove it from the current view
+            setFilteredApps(filteredApps.filter((app) => app.id !== selectedApp.id));
+        } else {
+            // If viewing 'all' or 'funded', just update the state without modifying filteredApps directly here
+            // The state updates will trigger re-filtering if necessary elsewhere
+        }
+
+        // Update the main applications list as well (important for consistency)
+        setApplications(prevApps => prevApps.map(app => app.id === selectedApp.id ? fundedApp : app));
+
+
         setShowFundModal(false);
     };
 
@@ -499,7 +564,7 @@ function ViewApplications() {
                                     app.drawTypes.map(type => ({
                                         ...app,
                                         drawTypes: [type], // Flatten `drawTypes` for each entry,
-                                        drawAmount: type.drawType,
+                                        drawAmount: type.drawAmount,
                                         drawType: type.drawType
                                     }))
                                 )
