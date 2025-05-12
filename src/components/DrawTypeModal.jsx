@@ -18,6 +18,8 @@ function DrawTypeModal({ onClose, onSelect }) {
         "Wed",
         "Thu",
         "Fri",
+        "Sat",
+        "Sun",
         "Special",
     ]
 
