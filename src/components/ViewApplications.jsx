@@ -19,7 +19,8 @@ import { issuesList } from './Application'; // Import the issuesList
 
 // Map of display names to application keys for the receipt
 const receiptFieldsMap = {
-    srNo: 'Application Serial #',
+    srNo: 'Application Number',
+    applicationId: 'Transaction ID',
     id: 'Funding Transaction ID',
     submittedAt: 'Date',
     legalName: 'Legal Name',
@@ -80,7 +81,7 @@ function ViewApplications() {
                     };
                 }).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)); // Sort in descending order
 
-                console.log({ applicationsData })
+
                 setApplications(applicationsData);
                 setFilteredApps(applicationsData);
 
@@ -94,7 +95,7 @@ function ViewApplications() {
                         drawTypes: [draw]  // Wrap the single drawType object in an array
                     }))
                 );
-                console.log({ mySelecteedApplications })
+
                 setSelectedApplications(mySelecteedApplications)
 
 
@@ -173,17 +174,17 @@ function ViewApplications() {
                 let eligibleApps = applications;
 
                 if (eligibilityFilters.selectedStates) {
-                    console.log("filterS", eligibilityFilters.selectedStates[0].value === 'Select All')
+
                     if (eligibilityFilters.selectedStates.length === 1 && eligibilityFilters.selectedStates[0].value === 'Select All') {
-                        console.log(eligibilityFilters.selectedCountries, "here")
+
                     } else {
 
-                        console.log(eligibilityFilters.selectedStates)
+
                         eligibleApps = eligibleApps.filter((app) =>
                             eligibilityFilters.selectedStates.some((state) => {
                                 const returnValue = app.selectedState?.toLowerCase().includes(state.value.toLowerCase());
 
-                                console.log(returnValue, app.selectedState)
+
 
                                 return returnValue
                             }
@@ -193,19 +194,15 @@ function ViewApplications() {
 
                 }
 
-                console.log("After states", eligibleApps)
 
 
                 if (eligibilityFilters.selectedCountries) {
-                    console.log("filterS", eligibilityFilters.selectedCountries[0].value === 'Select All')
                     if (eligibilityFilters.selectedCountries.length === 1 && eligibilityFilters.selectedCountries[0].value === 'Select All') {
-                        console.log(eligibilityFilters.selectedCountries, "here")
                     } else {
                         eligibleApps = eligibleApps.filter((app) =>
                             eligibilityFilters.selectedCountries.some((country) => {
                                 const returnValue = app.selectedCountry?.toLowerCase().includes(country.value.toLowerCase());
 
-                                console.log(returnValue, app.selectedCountry)
 
                                 return returnValue
                             }
@@ -215,24 +212,20 @@ function ViewApplications() {
 
                 }
 
-                console.log("After countries", eligibleApps)
 
                 if (eligibilityFilters.issues && eligibilityFilters.issues.length > 0) {
                     eligibleApps = eligibleApps.filter((app) => {
                         const outerRetValue = app.issues.some((issue) => {
                             const innverRetVal = eligibilityFilters.issues.includes(issue)
-                            console.log({ innverRetVal, appIssue: issue, app, eligibleIssues: eligibilityFilters.issues })
                             return innverRetVal;
                         })
 
-                        console.log({ retVale: outerRetValue, issues: app.issues, })
                         return outerRetValue;
                     }
 
                     );
                 }
 
-                console.log("after issues", eligibleApps)
 
                 // Filter out applications already selected for the current draw type
                 eligibleApps = eligibleApps.filter((app) => !app.drawTypes.find((dType) => dType.drawType === drawType));
@@ -281,7 +274,6 @@ function ViewApplications() {
 
     const handleFundApplication = (app) => {
 
-        console.log({addingToFunded: app})
         setSelectedApp(app);
         setShowFundModal(true);
     };
@@ -296,20 +288,20 @@ function ViewApplications() {
         // Update Firestore
         await updateDoc(doc(db, "applications", selectedApp.id), { funded: true, transactionId, dateFunded: now });
 
-        console.log({fundedApp})
+
 
         // --- Improved PDF Generation ---
         const docum = new jsPDF();
         const pageWidth = docum.internal.pageSize.getWidth();
         const pageHeight = docum.internal.pageSize.getHeight();
-        const margin = 20; // Page margin
+        const margin = 5; // Page margin
 
         // 1. Add Background Image (Optional, keep if desired)
         docum.addImage(bg, "PNG", 0, 0, pageWidth, pageHeight);
 
         // 2. Add Logo (Centered)
-        const logoWidth = 50; // Adjust as needed
-        const logoHeight = 50; // Adjust as needed
+        const logoWidth = 80; // Adjust as needed
+        const logoHeight = 80; // Adjust as needed
         const logoX = (pageWidth - logoWidth) / 2;
         const logoY = margin; // Place logo at the top margin
         if (logo) {
@@ -317,24 +309,69 @@ function ViewApplications() {
         }
 
         // 3. Title (Centered below logo)
-        const titleY = logoY + logoHeight + 15; // Space below logo
+        const titleY = logoY + logoHeight + 10; // Space below logo
         docum.setFont("helvetica", "bold");
-        docum.setFontSize(22); // Slightly smaller title
+        docum.setFontSize(20); // Slightly smaller title
         docum.setTextColor(0, 0, 0);
         docum.text("Funding Receipt", pageWidth / 2, titleY, { align: "center" });
 
-        // 4. Draw Separator Line (Adjusted position)
-        const lineY = titleY + 8; // Position relative to title
+        docum.setFontSize(12);
+        // docum.setFont("helvetica", "bold");
+        // docum.setTextColor(30, 30, 30);
+        // docum.text(`Transaction ID:`, margin, titleY + 15);
+
+        // // Set value style
+        // docum.setFont("helvetica", "normal");
+        // docum.setTextColor(50, 50, 50);
+
+        const valueX = margin + 50; // Indent value slightly
+
+        // // Handle potential multi-line values
+        // const splitValue = docum.splitTextToSize(selectedApp.id, pageWidth - valueX - margin);
+        // docum.text(splitValue, valueX, titleY + 15);
+
+
+        // // 4. Draw Separator Line (Adjusted position)
+        const lineY = titleY + 15; // Position relative to title
         docum.setDrawColor(200, 200, 200); // Light gray line
         docum.line(margin, lineY, pageWidth - margin, lineY);
 
         // 5. Dynamic Fields (Table-like structure) - Renumbered
-        let currentY = lineY + 15; // Start position for fields
+        let currentY = lineY + 10; // Start position for fields
         const labelX = margin;
-        const valueX = margin + 50; // Indent value slightly
 
         docum.setFontSize(11);
 
+        console.log({fields : selectedFields})
+
+        if(!selectedFields.includes('srNo')){
+
+            if(selectedFields.includes('transactionId')){
+
+                const txIdLabel = "Funding Transaction ID:";
+                const txIdValue = transactionId; // From function scope
+    
+                // Set label style
+                docum.setFont("helvetica", "bold");
+                docum.setTextColor(30, 30, 30);
+                docum.text(txIdLabel, labelX, currentY);
+    
+                // Set value style
+                docum.setFont("helvetica", "normal");
+                docum.setTextColor(50, 50, 50);
+    
+                const splitTxIdValue = docum.splitTextToSize(String(txIdValue || 'N/A'), pageWidth - valueX - margin);
+                docum.text(splitTxIdValue, valueX, currentY);
+    
+                // Increment Y position for Transaction ID line
+                currentY += (splitTxIdValue.length * 7) + 3;
+            }
+
+
+        
+
+
+        }
         Object.keys(receiptFieldsMap).forEach((field) => {
             if (selectedFields.includes(field)) {
                 const label = receiptFieldsMap[field] || field;
@@ -385,6 +422,25 @@ function ViewApplications() {
 
                     // Increment Y position for Transaction ID line
                     currentY += (splitTxIdValue.length * 7) + 3;
+
+
+                    const txIdRealLable = "Application Serial #:";
+                    const txIdRealValue = selectedApp.id; // From function scope
+
+                    // Set label style
+                    docum.setFont("helvetica", "bold");
+                    docum.setTextColor(30, 30, 30);
+                    docum.text(txIdRealLable, labelX, currentY);
+
+                    // Set value style
+                    docum.setFont("helvetica", "normal");
+                    docum.setTextColor(50, 50, 50);
+
+                    const splitTxIdValue2 = docum.splitTextToSize(String(txIdRealValue || 'N/A'), pageWidth - valueX - margin);
+                    docum.text(splitTxIdValue2, valueX, currentY);
+
+                    // Increment Y position for Transaction ID line
+                    currentY += (splitTxIdValue2.length * 7) + 3;
                 }
 
                 // Add page break if content overflows
