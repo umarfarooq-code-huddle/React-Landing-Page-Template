@@ -12,7 +12,7 @@ import JsonData from '../data/data.json';
 import logo from "../assets/landingAssets/image.png";
 import bg from "../assets/landingAssets/bg.png";
 import FundApplicationModal from './FundApplicationModal'; // Import new modal
-import { jsPDF } from 'jspdf'; // Import jsPDF for generating PDF
+// import { jsPDF } from 'jspdf'; // Import jsPDF for generating PDF
 
 import { Navigation } from './navigation';
 import { issuesList } from './Application'; // Import the issuesList
@@ -291,6 +291,7 @@ function ViewApplications() {
 
 
         // --- Improved PDF Generation ---
+        const { jsPDF } = await import('jspdf'); // Dynamically import jspdf
         const docum = new jsPDF();
         const pageWidth = docum.internal.pageSize.getWidth();
         const pageHeight = docum.internal.pageSize.getHeight();
