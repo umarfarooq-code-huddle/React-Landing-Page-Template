@@ -188,12 +188,19 @@ const AdminNewsFeed = () => {
     <>
       <Navigation data={landingPageData.App} />
       <div style={styles.container}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 
         <h1 style={styles.heading}>News Feed</h1>
         <div style={{ textAlign: "center", marginBottom: "20px" }}>
-        <Button variant="contained" color="primary" onClick={navigateToAddNews}>
+        <Button variant="contained" color="primary" onClick={navigateToAddNews} style={{ marginRight: "10px" }}>
           Add News
+        </Button>
+        <Button 
+          variant="contained" 
+          onClick={() => navigate("/admin-links")} 
+          style={{ background: "#6c757d", color: "#fff" }}
+        >
+          Back to Admin Dashboard
         </Button>
       </div>
         </div>

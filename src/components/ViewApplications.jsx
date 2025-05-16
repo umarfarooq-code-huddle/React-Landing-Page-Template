@@ -1,5 +1,5 @@
 import { doc, updateDoc } from 'firebase/firestore';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './ViewApplications.module.css';
 import globalStyles from '../global.module.css';
 import EligibilityModal from './EligibilityModal';
@@ -61,55 +61,76 @@ function ViewApplications() {
     const states = useStates(selectedCountryFilter); // States will depend on selected country
 
     // Fetch applications from Firestore
-    useEffect(() => {
-        const fetchApplications = async () => {
-            try {
-                const applicationsCollection = collection(db, 'applications');
-                const applicationsSnapshot = await getDocs(applicationsCollection);
-                const applicationsData = applicationsSnapshot.docs.map((doc, index) => {
-                    const data = doc.data();
-                    const submissionDate = data.submittedAt ? new Date(data.submittedAt) : new Date();
-                    const expiryDate = new Date(submissionDate);
-                    expiryDate.setDate(expiryDate.getDate() + 365);
-                    const applicationExpiry = expiryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                    return {
-                        id: doc.id, // Include document ID
-                        srNo: index + 1, // Add serial number
-                        applicationExpiry, // Add days remaining
-                        drawTypes: data.drawTypes || [], // Initialize drawTypes array
-                        ...data,
-                    };
-                }).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)); // Sort in descending order
+    const fetchApplications = useCallback(async () => {
+        try {
+            const applicationsCollection = collection(db, 'applications');
+            const applicationsSnapshot = await getDocs(applicationsCollection);
+            const applicationsData = applicationsSnapshot.docs.map((doc, index) => {
+                const data = doc.data();
+                const submissionDate = data.submittedAt ? new Date(data.submittedAt) : new Date();
+                const expiryDate = new Date(submissionDate);
+                expiryDate.setDate(expiryDate.getDate() + 365);
+                const applicationExpiry = expiryDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                return {
+                    id: doc.id, // Include document ID
+                    srNo: index + 1, // Add serial number
+                    applicationExpiry, // Add days remaining
+                    drawTypes: data.drawTypes || [], // Initialize drawTypes array
+                    _originalDrawTypes: data.drawTypes || [], // Store original for 'all' tab
+                    ...data,
+                };
+            }).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)); // Sort in descending order
 
 
-                setApplications(applicationsData);
-                setFilteredApps(applicationsData);
+            setApplications(applicationsData);
+
+            const mySelecteedApplications = applicationsData.filter((app) => app.drawTypes.length > 0).flatMap(app =>
+                app.drawTypes.map(draw => ({
+                    ...app,  // Keep all fields
+                    drawTypes: [draw]  // Wrap the single drawType object in an array
+                }))
+            );
+
+            setSelectedApplications(mySelecteedApplications)
 
 
-                const fundedApplications = applicationsData.filter(app => app.funded);
-                setFundedApps(fundedApplications);
 
-                const mySelecteedApplications = applicationsData.filter((app) => app.drawTypes.length > 0).flatMap(app =>
+            // Create flattened funded applications
+            const flatFundedApps = applicationsData
+                .filter(app => app.funded && app.drawTypes && app.drawTypes.length > 0)
+                .flatMap(app =>
                     app.drawTypes.map(draw => ({
-                        ...app,  // Keep all fields
-                        drawTypes: [draw]  // Wrap the single drawType object in an array
+                        ...app,
+                        drawTypes: [draw], // This application instance for the row is about this single draw
+                        currentSingleDraw: draw,
                     }))
                 );
+            setFundedApps(flatFundedApps);
 
-                setSelectedApplications(mySelecteedApplications)
-
-
-            } catch (error) {
-                console.error('Error fetching applications:', error);
-            }
-        };
-
-        fetchApplications();
+        } catch (error) {
+            console.error('Error fetching applications:', error);
+        }
     }, []);
+
+
+    useEffect(() => {
+        fetchApplications();
+    }, [fetchApplications]);
 
     // useEffect to filter applications when filters change
     useEffect(() => {
-        let tempFilteredApps = applications;
+        let sourceData;
+        if (activeTab === 'all') {
+            sourceData = applications;
+        } else if (activeTab === 'selected') {
+            sourceData = selectedApplications;
+        } else if (activeTab === 'funded') {
+            sourceData = fundedApps;
+        } else {
+            sourceData = applications; // Default fallback
+        }
+
+        let tempFilteredApps = sourceData;
 
         // Filter by Legal Name
         if (legalNameFilter) {
@@ -146,7 +167,7 @@ function ViewApplications() {
         }
 
         setFilteredApps(tempFilteredApps);
-    }, [applications, legalNameFilter, selectedCountryFilter, selectedStateFilter, selectedIssueFilter]); // Dependencies
+    }, [applications, selectedApplications, fundedApps, activeTab, legalNameFilter, selectedCountryFilter, selectedStateFilter, selectedIssueFilter]); // Dependencies
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -235,6 +256,7 @@ function ViewApplications() {
                     const now = new Date().toISOString();
                     await updateDoc(doc(db, 'applications', randomApp.id), { drawTypes: [...randomApp.drawTypes, { drawType, drawAmount }], dateSelected: now });
                     randomApp.dateSelected = now;
+                    fetchApplications(); // Refetch applications
                 }
                 setSelectedApp(randomApp || null);
                 if (!randomApp) {
@@ -261,15 +283,7 @@ function ViewApplications() {
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
-        if (tab === 'selected') {
-            setFilteredApps(applications.filter((app) => app.drawTypes.length > 0))
-
-
-        } else if (tab === 'funded') {
-            setFilteredApps(fundedApps);
-        } else {
-            setFilteredApps(applications);
-        }
+        // No need to call setFilteredApps here, the useEffect will handle it
     };
 
     const handleFundApplication = (app) => {
@@ -288,6 +302,7 @@ function ViewApplications() {
         // Update Firestore
         await updateDoc(doc(db, "applications", selectedApp.id), { funded: true, transactionId, dateFunded: now });
 
+        fetchApplications(); // Refetch applications
 
 
         // --- Improved PDF Generation ---
@@ -534,14 +549,7 @@ function ViewApplications() {
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#28a745', lineHeight: 1 }}>{filteredApps.flatMap(app =>
-                                app.drawTypes.map(type => ({
-                                    ...app,
-                                    drawTypes: [type], // Flatten `drawTypes` for each entry,
-                                    drawAmount: type.drawType,
-                                    drawType: type.drawType
-                                }))
-                            ).length}</div>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#28a745', lineHeight: 1 }}>{selectedApplications.length}</div>
                             <div style={{ color: '#6c757d', fontSize: '13px' }}>Selected Applications</div>
                         </div>
                         <div style={{
@@ -557,7 +565,7 @@ function ViewApplications() {
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#dc3545', lineHeight: 1 }}>{applications.filter(app => app.funded).length}</div>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#dc3545', lineHeight: 1 }}>{fundedApps.length}</div>
                             <div style={{ color: '#6c757d', fontSize: '13px' }}>Funded Applications</div>
                         </div>
                     </div>
@@ -652,7 +660,7 @@ function ViewApplications() {
                             <th>Application ID</th>
                             <th>
                                 {
-                                    activeTab === "all" ? "Expiry Date" : activeTab === "selected" ? "Date Selected" : "Funded Date"
+                                    activeTab === "all" ? "Expiry Date" : activeTab === "selected" ? "Date Selected" : "Date Funded"
                                 }
 
                             </th>
@@ -680,22 +688,14 @@ function ViewApplications() {
                     </thead>
                     <tbody>
                         {filteredApps.length > 0 ? (
-                            (activeTab === 'selected'
-                                ? filteredApps.flatMap(app =>
-                                    app.drawTypes.map(type => ({
-                                        ...app,
-                                        drawTypes: [type], // Flatten `drawTypes` for each entry,
-                                        drawAmount: type.drawAmount,
-                                        drawType: type.drawType
-                                    }))
-                                )
-                                : filteredApps
-                            ).map((app) => (
-                                <tr key={`${app.id}-${app.drawTypes[0]?.drawType || 'no-draw'}`}>
+                            filteredApps.map((app, idx) => (
+                                <tr key={app.currentSingleDraw ? `${app.id}-${app.currentSingleDraw.drawType}-${app.currentSingleDraw.drawAmount}-${idx}` : `${app.id}-${idx}`}>
                                     <td>{app.applicationId || 'N/A'}</td>
                                     <td>
                                         {
-                                            activeTab === "all" ? app.applicationExpiry : activeTab === "selected" ? (app.dateSelected) : (app.dateFunded)
+                                            activeTab === "all" ? app.applicationExpiry :
+                                            activeTab === "selected" ? (app.dateSelected ? new Date(app.dateSelected).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A') :
+                                            (app.dateFunded ? new Date(app.dateFunded).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A')
                                         }
                                     </td>
                                     <td>{app.legalName}</td>
@@ -706,14 +706,14 @@ function ViewApplications() {
                                     <td>{app.gmail || 'N/A'}</td>
                                     <td>{app.phone || 'N/A'}</td>
                                     <td>
-                                        {app?.issues?.map((issue, idx) => (
-                                            <div key={idx}>{issue}</div>
+                                        {app?.issues?.map((issue, issueIdx) => (
+                                            <div key={issueIdx}>{issue}</div>
                                         ))}
                                     </td>
                                     <td>
-                                        {app?.drawTypes?.map((type, idx) => (
+                                        {(activeTab === 'all' ? (app._originalDrawTypes || app.drawTypes) : app.drawTypes)?.map((type, innerIdx) => (
                                             <span
-                                                key={idx}
+                                                key={innerIdx}
                                                 style={{
                                                     display: 'inline-block',
                                                     padding: '4px 9px',
@@ -732,23 +732,8 @@ function ViewApplications() {
 
                                     {activeTab === 'selected' &&
                                         <td>
-                                            {app?.drawTypes?.map((type, idx) => (
-                                                <span
-                                                    key={idx}
-                                                    style={{
-                                                        display: 'inline-block',
-                                                        padding: '4px 9px',
-                                                        borderRadius: '15px',
-                                                        backgroundColor: 'blue',
-                                                        color: '#fff',
-                                                        fontWeight: 'bold',
-                                                        marginRight: '4px',
-                                                        marginBottom: '4px'
-                                                    }}
-                                                >
-                                                    {type.drawAmount}
-                                                </span>
-                                            ))}
+                                            {/* For selected tab, app.drawTypes is [singleDraw], so app.drawTypes[0] is currentSingleDraw */}
+                                            {app.drawTypes[0]?.drawAmount}
                                         </td>}
 
                                     {activeTab === 'selected' && (

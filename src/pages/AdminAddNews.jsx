@@ -3,11 +3,13 @@ import { db } from "../utils/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { Navigation } from "../components/navigation";
 import JsonData from "../data/data.json";
+import { useNavigate } from "react-router-dom";
 
 const AdminAddNews = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [link, setLink] = useState("");
+  const navigate = useNavigate();
 
   const handleAddNews = async (e) => {
     e.preventDefault();
@@ -37,8 +39,23 @@ const AdminAddNews = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-            <Navigation data={landingPageData.App} />
+
       <h1 style={{marginTop: '10vh'}}>Add News</h1>
+      <button
+        onClick={() => navigate("/admin-links")}
+        style={{
+          padding: "10px 20px",
+          background: "#6c757d",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          fontSize: "16px",
+          cursor: "pointer",
+          marginBottom: "20px",
+        }}
+      >
+        Back to Admin Dashboard
+      </button>
       <form onSubmit={handleAddNews} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <input
           type="text"

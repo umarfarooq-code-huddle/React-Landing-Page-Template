@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { db } from "../utils/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const AdminAddDrawSchedule = () => {
   const [title, setTitle] = useState("");
   const [drawDate, setDrawDate] = useState("");
   const [drawAmount, setDrawAmount] = useState("");
+  const navigate = useNavigate();
 
   const handleAddSchedule = async (e) => {
     e.preventDefault();
@@ -28,6 +30,21 @@ const AdminAddDrawSchedule = () => {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Add Draw Schedule</h1>
+      <button
+        onClick={() => navigate("/admin-links")}
+        style={{
+          padding: "10px 20px",
+          background: "#6c757d", // A neutral color
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          fontSize: "16px",
+          cursor: "pointer",
+          marginBottom: "20px", // Add some space below the button
+        }}
+      >
+        Back to Admin Dashboard
+      </button>
       <form
         onSubmit={handleAddSchedule}
         style={{ display: "flex", flexDirection: "column", gap: "20px" }}
