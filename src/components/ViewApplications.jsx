@@ -104,7 +104,8 @@ function ViewApplications() {
                         drawTypes: [draw], // This application instance for the row is about this single draw
                         currentSingleDraw: draw,
                     }))
-                );
+                )
+                .sort((a, b) => new Date(b.dateFunded) - new Date(a.dateFunded)); // Sort by dateFunded descending
             setFundedApps(flatFundedApps);
 
         } catch (error) {
