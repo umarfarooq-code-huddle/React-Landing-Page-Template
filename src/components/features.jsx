@@ -215,7 +215,7 @@ export const Features = (props) => {
       <div
         style={{
           width: isMobile ? "100%" : "90%",
-          height: "70vh",
+          height: "auto",
           paddingTop: "40px",
           paddingBottom: "30px",
         }}

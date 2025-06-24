@@ -16,7 +16,7 @@ export const About = (props) => {
         width: "100%",
         paddingTop:'8vh',
         marginTop:'5vh',
-        height:'100vh',
+        height:'auto',
         padding: isMobile ? "20px" : "0vw",
         fontFamily: "Rockwell, serif",
         color: "#000",
