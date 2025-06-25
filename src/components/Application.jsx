@@ -127,7 +127,7 @@ function ApplicationForm() {
       // Navigate after a short delay to allow the user to see the success message
       setTimeout(() => {
         navigate('/');
-      }, 3000);
+      }, 5000);
     } catch (error) {
       console.error('Error adding document: ', error);
     }
