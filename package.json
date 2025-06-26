@@ -10,8 +10,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "axios": "^1.7.7",
-    "country-state-city": "^3.2.1",
     "emailjs-com": "^2.6.4",
     "firebase": "^10.14.1",
     "google-one-tap": "^1.0.6",

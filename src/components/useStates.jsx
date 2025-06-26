@@ -1,21 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Country, State } from 'country-state-city';
+import { states } from '../data/states';
 
 export function useStates(selectedCountry) {
-  const [states, setStates] = useState([]);
+  const [statesList, setStatesList] = useState([]);
 
   useEffect(() => {
-    if (selectedCountry) {
-      const countryCode = Country.getAllCountries().find(
-        (country) => country.name === selectedCountry
-      )?.isoCode;
-
-      if (countryCode) {
-        const statesList = State.getStatesOfCountry(countryCode);
-        setStates(['Select All', ...statesList.map((state) => state.name)]);
-      }
+    if (selectedCountry && selectedCountry !== 'Select All') {
+      const countryStates = states[selectedCountry] || [];
+      setStatesList(countryStates);
+    } else {
+      setStatesList([]);
     }
   }, [selectedCountry]);
 
-  return states;
+  return statesList;
 }

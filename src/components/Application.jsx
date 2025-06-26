@@ -44,6 +44,7 @@ function ApplicationForm() {
 
   const countries = useCountries();
   const states = useStates(selectedCountry);
+  console.log({selectedCountry,states})
 
   const handleSubmit = async (event) => {
     event.preventDefault();

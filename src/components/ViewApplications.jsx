@@ -167,6 +167,18 @@ function ViewApplications() {
             }
         }
 
+        if(activeTab === 'all'){
+            tempFilteredApps = tempFilteredApps.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
+        }
+        else if(activeTab === 'selected'){
+            console.log({tempFilteredApps})
+            tempFilteredApps = tempFilteredApps.sort((a, b) => b.drawTypes[0].timesSelected - a.drawTypes[0].timesSelected)
+            console.log("Here", tempFilteredApps)
+        }
+        else if(activeTab === 'funded'){
+            tempFilteredApps = tempFilteredApps.sort((a, b) => b.timesSelected - a.timesSelected)
+        }
+
         setFilteredApps(tempFilteredApps);
     }, [applications, selectedApplications, fundedApps, activeTab, legalNameFilter, selectedCountryFilter, selectedStateFilter, selectedIssueFilter]); // Dependencies
 
@@ -192,86 +204,66 @@ function ViewApplications() {
 
         setTimeout(async () => {
             try {
-
                 let eligibleApps = applications;
 
-                if (eligibilityFilters.selectedStates) {
-
-                    if (eligibilityFilters.selectedStates.length === 1 && eligibilityFilters.selectedStates[0].value === 'Select All') {
-
-                    } else {
-
-
-                        eligibleApps = eligibleApps.filter((app) =>
-                            eligibilityFilters.selectedStates.some((state) => {
-                                const returnValue = app.selectedState?.toLowerCase().includes(state.value.toLowerCase());
-
-
-
-                                return returnValue
-                            }
-                            )
-                        );
-                    }
-
-                }
-
-
-
-                if (eligibilityFilters.selectedCountries) {
-                    if (eligibilityFilters.selectedCountries.length === 1 && eligibilityFilters.selectedCountries[0].value === 'Select All') {
-                    } else {
-                        eligibleApps = eligibleApps.filter((app) =>
-                            eligibilityFilters.selectedCountries.some((country) => {
-                                const returnValue = app.selectedCountry?.toLowerCase().includes(country.value.toLowerCase());
-
-
-                                return returnValue
-                            }
-                            )
-                        );
-                    }
-
-                }
-
-
-                if (eligibilityFilters.issues && eligibilityFilters.issues.length > 0) {
-                    eligibleApps = eligibleApps.filter((app) => {
-                        const outerRetValue = app.issues.some((issue) => {
-                            const innverRetVal = eligibilityFilters.issues.includes(issue)
-                            return innverRetVal;
-                        })
-
-                        return outerRetValue;
-                    }
-
+                // Only filter by states if states are selected and not "Select All"
+                if (eligibilityFilters.selectedStates?.length > 0 && 
+                    !(eligibilityFilters.selectedStates.length === 1 && 
+                      eligibilityFilters.selectedStates[0].value === 'Select All')) {
+                    eligibleApps = eligibleApps.filter((app) =>
+                        eligibilityFilters.selectedStates.some((state) => 
+                            app.selectedState?.toLowerCase().includes(state.value.toLowerCase())
+                        )
                     );
                 }
 
+                // Only filter by countries if countries are selected and not "Select All"  
+                if (eligibilityFilters.selectedCountries?.length > 0 &&
+                    !(eligibilityFilters.selectedCountries.length === 1 && 
+                      eligibilityFilters.selectedCountries[0].value === 'Select All')) {
+                    eligibleApps = eligibleApps.filter((app) =>
+                        eligibilityFilters.selectedCountries.some((country) =>
+                            app.selectedCountry?.toLowerCase().includes(country.value.toLowerCase())
+                        )
+                    );
+                }
+
+                // Only filter by issues if issues are selected
+                if (eligibilityFilters.issues?.length > 0) {
+                    eligibleApps = eligibleApps.filter((app) =>
+                        app.issues.some((issue) => eligibilityFilters.issues.includes(issue))
+                    );
+                }
 
                 // Filter out applications already selected for the current draw type
-                eligibleApps = eligibleApps.filter((app) => !app.drawTypes.find((dType) => dType.drawType === drawType));
+                eligibleApps = eligibleApps.filter((app) => 
+                    !app.drawTypes.find((dType) => dType.drawType === drawType)
+                );
 
                 const randomApp = eligibleApps[Math.floor(Math.random() * eligibleApps.length)];
+                
                 if (randomApp) {
                     const now = new Date().toISOString();
-                    await updateDoc(doc(db, 'applications', randomApp.id), { drawTypes: [...randomApp.drawTypes, { drawType, drawAmount }], dateSelected: now });
-                    randomApp.dateSelected = now;
-                    fetchApplications(); // Refetch applications
-                }
-                setSelectedApp(randomApp || null);
-                if (!randomApp) {
+                    await updateDoc(doc(db, 'applications', randomApp.id), {
+                        drawTypes: [...randomApp.drawTypes, { drawType, drawAmount, timesSelected: new Date().getTime()}],
+                        dateSelected: now,
 
-                    setError('No Application meets the criteria')
+                    });
+                    randomApp.dateSelected = now;
+                    fetchApplications();
+                    setSelectedApp(randomApp);
+                    setError(null);
                 } else {
-                    setError(null)
+                    setSelectedApp(null);
+                    setError('No Application meets the criteria');
                 }
+                
                 setLoading(false);
             } catch (e) {
                 setSelectedApp(null);
-                setError('No Application meets the criteria')
+                setError('No Application meets the criteria');
+                setLoading(false);
             }
-
         }, 1500);
     };
 
