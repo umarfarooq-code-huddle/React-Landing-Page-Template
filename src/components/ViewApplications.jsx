@@ -97,15 +97,17 @@ function ViewApplications() {
 
             // Create flattened funded applications
             const flatFundedApps = applicationsData
-                .filter(app => app.funded && app.drawTypes && app.drawTypes.length > 0)
+                .filter(app => app.drawTypes && app.drawTypes.length > 0)
                 .flatMap(app =>
-                    app.drawTypes.map(draw => ({
-                        ...app,
-                        drawTypes: [draw], // This application instance for the row is about this single draw
-                        currentSingleDraw: draw,
-                    }))
+                    app.drawTypes
+                        .filter(draw => draw.funded) // Only include draw types that are funded
+                        .map(draw => ({
+                            ...app,
+                            drawTypes: [draw], // This application instance for the row is about this single draw
+                            currentSingleDraw: draw,
+                        }))
                 )
-                .sort((a, b) => new Date(b.dateFunded) - new Date(a.dateFunded)); // Sort by dateFunded descending
+                .sort((a, b) => new Date(b.currentSingleDraw.dateFunded) - new Date(a.currentSingleDraw.dateFunded)); // Sort by dateFunded descending
             setFundedApps(flatFundedApps);
 
         } catch (error) {
@@ -176,7 +178,7 @@ function ViewApplications() {
             console.log("Here", tempFilteredApps)
         }
         else if(activeTab === 'funded'){
-            tempFilteredApps = tempFilteredApps.sort((a, b) => b.timesSelected - a.timesSelected)
+            tempFilteredApps = tempFilteredApps.sort((a, b) => new Date(b.currentSingleDraw.dateFunded) - new Date(a.currentSingleDraw.dateFunded))
         }
 
         setFilteredApps(tempFilteredApps);
@@ -290,13 +292,39 @@ function ViewApplications() {
 
     const handleFundModalSubmit = async (selectedFields, transactionId) => {
         const now = new Date().toISOString();
-        const fundedApp = { ...selectedApp, funded: true, transactionId, dateFunded: now };
-
-        // Update Firestore
-        await updateDoc(doc(db, "applications", selectedApp.id), { funded: true, transactionId, dateFunded: now });
+        
+        // Find the original application from the applications array
+        const originalApp = applications.find(app => app.id === selectedApp.id);
+        if (!originalApp) {
+            console.error('Original application not found');
+            return;
+        }
+        
+        // Find the specific drawType that is being funded (from the selected tab view)
+        const drawTypeToFund = selectedApp.drawTypes[0]; // For selected tab, we have single drawType
+        
+        // Find and update the specific drawType in the original application's drawTypes array
+        const updatedDrawTypes = originalApp.drawTypes.map(dt => 
+            dt.drawType === drawTypeToFund.drawType && 
+            dt.drawAmount === drawTypeToFund.drawAmount && 
+            dt.timesSelected === drawTypeToFund.timesSelected
+                ? { ...dt, funded: true, transactionId, dateFunded: now }
+                : dt
+        );
+        
+        // Update Firestore - update the specific drawType entry instead of setting funded at application level
+        await updateDoc(doc(db, "applications", selectedApp.id), { 
+            drawTypes: updatedDrawTypes 
+        });
 
         fetchApplications(); // Refetch applications
 
+        // Create funded app object for local state update (for the funded tab)
+        const fundedApp = { 
+            ...originalApp, 
+            drawTypes: updatedDrawTypes,
+            currentSingleDraw: { ...drawTypeToFund, funded: true, transactionId, dateFunded: now }
+        };
 
         // --- Improved PDF Generation ---
         const { jsPDF } = await import('jspdf'); // Dynamically import jspdf
@@ -477,20 +505,26 @@ function ViewApplications() {
         // --- End of Improved PDF Generation ---
 
 
-        // Move application to funded
-        setFundedApps([...fundedApps, fundedApp]);
-        // Update filteredApps based on the active tab state to avoid removing from 'selected' list incorrectly
+        // Update the main applications list with the updated drawTypes
+        setApplications(prevApps => prevApps.map(app => 
+            app.id === selectedApp.id 
+                ? { ...app, drawTypes: updatedDrawTypes }
+                : app
+        ));
+
+        // Add to funded apps list
+        setFundedApps(prevFundedApps => [...prevFundedApps, fundedApp]);
+
+        // Update filteredApps based on the active tab state
         if (activeTab === 'selected') {
-            // If viewing selected, remove it from the current view
-            setFilteredApps(filteredApps.filter((app) => app.id !== selectedApp.id));
-        } else {
-            // If viewing 'all' or 'funded', just update the state without modifying filteredApps directly here
-            // The state updates will trigger re-filtering if necessary elsewhere
+            // If viewing selected, remove the funded draw type from the current view
+            setFilteredApps(filteredApps.filter((app) => 
+                !(app.id === selectedApp.id && 
+                  app.drawTypes[0].drawType === drawTypeToFund.drawType && 
+                  app.drawTypes[0].drawAmount === drawTypeToFund.drawAmount && 
+                  app.drawTypes[0].timesSelected === drawTypeToFund.timesSelected)
+            ));
         }
-
-        // Update the main applications list as well (important for consistency)
-        setApplications(prevApps => prevApps.map(app => app.id === selectedApp.id ? fundedApp : app));
-
 
         setShowFundModal(false);
     };
@@ -672,6 +706,12 @@ function ViewApplications() {
                                 </th>
                             )}
 
+                            {activeTab === 'funded' && (
+                                <th>
+                                    Transaction ID
+                                </th>
+                            )}
+
                             {activeTab === 'selected' && (
                                 <th>
                                     Actions
@@ -688,7 +728,7 @@ function ViewApplications() {
                                         {
                                             activeTab === "all" ? app.applicationExpiry :
                                             activeTab === "selected" ? (app.dateSelected ? new Date(app.dateSelected).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A') :
-                                            (app.dateFunded ? new Date(app.dateFunded).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A')
+                                            (app.currentSingleDraw?.dateFunded ? new Date(app.currentSingleDraw.dateFunded).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A')
                                         }
                                     </td>
                                     <td>{app.legalName}</td>
@@ -711,14 +751,16 @@ function ViewApplications() {
                                                     display: 'inline-block',
                                                     padding: '4px 9px',
                                                     borderRadius: '15px',
-                                                    backgroundColor: '#28a745',
+                                                    backgroundColor: type.funded ? '#dc3545' : '#28a745', // Red for funded, green for selected
                                                     color: '#fff',
                                                     fontWeight: 'bold',
                                                     marginRight: '4px',
                                                     marginBottom: '4px'
                                                 }}
                                             >
-                                                {activeTab === 'selected' ? type.drawType : `${String(type.drawType)} (${type.drawAmount})`}
+                                                {activeTab === 'selected' ? type.drawType : 
+                                                 activeTab === 'funded' ? `${String(type.drawType)}` :
+                                                 `${String(type.drawType)} (${type.drawAmount})`}
                                             </span>
                                         ))}
                                     </td>
@@ -727,6 +769,12 @@ function ViewApplications() {
                                         <td>
                                             {/* For selected tab, app.drawTypes is [singleDraw], so app.drawTypes[0] is currentSingleDraw */}
                                             {app.drawTypes[0]?.drawAmount}
+                                        </td>}
+
+                                    {activeTab === 'funded' &&
+                                        <td>
+                                            {/* For funded tab, show transaction ID */}
+                                            {app.currentSingleDraw?.transactionId || 'N/A'}
                                         </td>}
 
                                     {activeTab === 'selected' && (
@@ -744,7 +792,7 @@ function ViewApplications() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="12" className={styles.noData}>
+                                <td colSpan={activeTab === 'funded' ? "13" : "12"} className={styles.noData}>
                                     No applications found.
                                 </td>
                             </tr>
