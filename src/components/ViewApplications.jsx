@@ -409,10 +409,17 @@ function ViewApplications() {
 
 
         }
+        
         Object.keys(receiptFieldsMap).forEach((field) => {
             if (selectedFields.includes(field)) {
                 const label = receiptFieldsMap[field] || field;
                 let value = selectedApp[field];
+                if(field === 'drawType'){
+                    value = drawTypeToFund.drawType;
+                }
+                else if(field === 'drawAmount'){
+                    value = drawTypeToFund.drawAmount;
+                }
 
                 if (Array.isArray(value)) {
                     value = value.join(', '); // Join array values
